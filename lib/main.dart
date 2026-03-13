@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'
+    show kDebugMode, defaultTargetPlatform, TargetPlatform;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,17 +14,25 @@ import 'presentation/providers/plan_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
+  // Initialize Firebase (skip on iOS if GoogleService-Info.plist is not configured)
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    if (kDebugMode) {
-      debugPrint('Firebase initialized successfully');
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // iOS: Only initialize if GoogleService-Info.plist is properly configured
+      // For now, skip Firebase on iOS to prevent crash with placeholder config
+      if (kDebugMode) {
+        debugPrint('Firebase: Skipping initialization on iOS (no GoogleService-Info.plist)');
+      }
+    } else {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      if (kDebugMode) {
+        debugPrint('Firebase initialized successfully');
+      }
     }
   } catch (e) {
     if (kDebugMode) {
-      debugPrint('Firebase initialization error: $e');
+      debugPrint('Firebase initialization error (non-fatal): $e');
     }
   }
 
