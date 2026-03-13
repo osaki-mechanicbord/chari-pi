@@ -1,0 +1,220 @@
+{
+  "@@locale": "en",
+
+  "appName": "CHARI-PI",
+  "appTagline": "Your Cycling Safety Navigator",
+
+  "navMap": "Navi",
+  "navLearn": "Learn",
+  "navQuiz": "Quiz",
+  "navLaw": "Laws",
+  "navLog": "Log",
+  "navSettings": "Settings",
+
+  "splashSubtitle": "Cycling Safety Navigator",
+  "loading": "Loading...",
+
+  "termsTitle": "Terms of Use",
+  "agreeAndContinue": "Agree & Continue",
+
+  "startTitle": "Let's start riding",
+  "startButton": "Start Navi",
+  "locationPermissionRequired": "Location permission required",
+  "featureSafety": "Safety",
+  "featureSafetyDesc": "Real-time alerts",
+  "featureMap": "Map",
+  "featureMapDesc": "OSM powered",
+  "featureLearn": "Learn",
+  "featureLearnDesc": "Traffic rules",
+
+  "gpsSearching": "Searching GPS...",
+  "gpsAccuracy": "GPS Accuracy",
+  "stopSignAhead": "Stop sign ahead",
+  "trafficSignalAhead": "Traffic signal ahead",
+  "onewayWarning": "One-way caution",
+  "metersAhead": "m ahead",
+  "demoMode": "Demo",
+  "demoModeButton": "Demo Mode",
+  "gpsUnavailableTitle": "GPS Not Found",
+  "gpsUnavailableMessage": "Cannot acquire GPS location.\n\n• Check browser location permissions\n• Turn on location services\n\nYou can try Demo Mode.",
+  "closeButton": "Close",
+  "startWithDemo": "Start Demo",
+  "warningCountUnit": "",
+  "warningMessageFormat": "{type} in {distance}m",
+  "@warningMessageFormat": {
+    "placeholders": {
+      "distance": {"type": "int"},
+      "type": {"type": "String"}
+    }
+  },
+  "nodeStopSign": "Stop sign",
+  "nodeTrafficSignal": "Traffic signal",
+  "nodeOneway": "One-way",
+
+  "logTitle": "Ride History",
+  "noHistory": "No ride history",
+  "totalDistance": "Total Distance",
+  "duration": "Duration",
+  "warningsLabel": "Warnings",
+  "rideCount": "Rides",
+  "deleteHistory": "Delete History",
+  "deleteHistoryConfirm": "Delete all ride history?",
+  "cancelButton": "Cancel",
+  "deleteButton": "Delete",
+  "startNavPrompt": "Start navigation to record your ride",
+
+  "learnTitle": "Traffic Rules",
+  "offlineLabel": "Offline",
+  "refreshTooltip": "Refresh data",
+  "allCategories": "All",
+  "sourceLabel": "Source: National Police Agency / e-Gov",
+  "rulesCountFormat": "{count} traffic rules",
+  "@rulesCountFormat": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "loadingContent": "Loading content...",
+  "retryButton": "Retry",
+  "noMatchingRules": "No matching rules",
+  "catBasic": "Basic Rules",
+  "catIntersection": "Intersections",
+  "catRoad": "Road Riding",
+  "catEquipment": "Equipment",
+  "catProhibition": "Prohibited",
+  "catSafety": "Safety",
+  "catInsurance": "Insurance",
+  "catNewLaw": "New Laws",
+  "catRegistration": "Registration",
+
+  "quizTitle": "Traffic Rules Quiz",
+  "quizCorrect": "Correct!",
+  "quizIncorrect": "Incorrect...",
+  "quizScore": "Score",
+  "quizNext": "Next Question",
+  "quizFinish": "See Results",
+  "quizResult": "Quiz Result",
+  "quizRetry": "Try Again",
+  "quizStart": "Start Quiz",
+  "quizTotal": "Total",
+  "quizEasy": "Easy",
+  "quizMedium": "Medium",
+  "quizHard": "Hard",
+  "quizAllLevels": "All Levels",
+  "quizDifficulty": "Difficulty",
+  "quizQuestionCount": "Questions",
+  "quizQuestionUnit": "Q",
+  "quizNoQuestions": "No quizzes found",
+  "quizQuestionProgress": "Q{current} / {total}",
+  "@quizQuestionProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizScoreResult": "{score} / {total} correct",
+  "@quizScoreResult": {
+    "placeholders": {
+      "score": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizGreatMessage": "Excellent! You understand traffic rules well.",
+  "quizTryAgainMessage": "Keep trying!\nReview the traffic rules once more.",
+  "quizSourceNote": "Source: Road Traffic Act / National Police Agency Bicycle Portal\nContent is based on official sources. Please verify with the latest laws.",
+
+  "lawUpdatesTitle": "Law Updates",
+  "lawUpdatesInfo": "Latest bicycle law changes and new regulations",
+  "lawNoUpdates": "No law updates yet",
+  "lawUpcoming": "Upcoming",
+  "lawEnacted": "Enacted",
+  "lawEffectiveDate": "Effective: {date}",
+  "@lawEffectiveDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "lawCheckSource": "Check source",
+
+  "settingsTitle": "Settings",
+  "planSection": "Plan",
+  "alertSection": "Alert Settings",
+  "displaySection": "Display",
+  "appInfoSection": "App Info",
+  "legalSection": "Legal",
+  "languageSection": "Language",
+
+  "voiceAlert": "Voice Alert",
+  "voiceAlertDesc": "Audio alerts for stop signs & signals",
+  "vibrationAlert": "Vibration",
+  "vibrationAlertDesc": "Vibrate on warnings",
+  "alertDistance": "Alert Distance",
+  "darkMap": "Dark Map",
+  "darkMapDesc": "Use dark map theme",
+  "languageSetting": "Language",
+  "languageSettingDesc": "Change app display language",
+  "languageJapanese": "日本語",
+  "languageEnglish": "English",
+
+  "aboutApp": "About",
+  "aboutAppDesc": "CHARI-PI - Cycling Safety Navigator",
+  "appVersion": "Version",
+  "aboutDialogContent": "CHARI-PI is a navigation app that supports cycling safety.\n\nUsing OpenStreetMap data, it provides real-time notifications for stop signs and traffic signals.\n\nRide safely with CHARI-PI!",
+
+  "privacyPolicy": "Privacy Policy",
+  "privacyPolicyDesc": "How we handle personal & location data",
+  "securityPolicy": "Security Policy",
+  "securityPolicyDesc": "Information security management",
+  "termsOfService": "Terms of Service",
+  "termsOfServiceDesc": "Service usage conditions",
+  "disclaimer": "Disclaimer",
+  "disclaimerDesc": "Service disclaimers",
+  "commercialLaw": "Commercial Transaction Act",
+  "commercialLawDesc": "Business info & sales conditions",
+
+  "operatingCompany": "Operator",
+  "companyName": "TCI Corporation",
+  "companyAddress": "Shintaka 1-5-4, Yodogawa-ku, Osaka, Japan",
+
+  "planUpgrade": "Upgrade",
+  "planChange": "Change",
+  "planUpgradePrompt": "Upgrade your plan for better safety",
+  "planFreeWithWatch": "Free · GPS Tracking enabled",
+
+  "familySafety": "Family Safety",
+  "familyPrompt": "Keep family & team safe",
+  "corporateSafety": "Corporate Safety",
+  "gpsWatchFree": "GPS Tracking (Free)",
+  "adminMode": "Admin Mode",
+  "employeeMode": "Employee Mode",
+  "watchingMode": "GPS Tracking active",
+  "sharingGps": "Sharing GPS",
+  "parentMode": "Parent Mode",
+  "childMode": "Child Mode",
+  "membersCount": "{count} employees",
+  "@membersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} children",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "watchingPerson": "GPS tracking · {name}",
+  "@watchingPerson": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "beingWatched": "Sharing GPS · Being watched",
+
+  "gpsWaiting": "GPS Standby",
+  "gpsHigh": "High",
+  "gpsMedium": "Medium",
+  "gpsLow": "Low",
+
+  "termsContentFull": "Thank you for using CHARI-PI.\n\nThis app is a navigation tool to support traffic safety while cycling.\n\n[Disclaimer]\n- This app is a supplementary tool for traffic safety and does not exempt the rider from duty of care.\n- GPS accuracy and map data accuracy are not guaranteed.\n- Always prioritize safety awareness while riding.\n- The developer assumes no liability for accidents caused by using this app.\n\n[Learning Content]\n- Traffic rule content is based on official resources from the National Police Agency and e-Gov law database.\n- Content is based on public resources, but please verify with the latest laws.\n- Not intended as legal advice.\n- Updates may be delayed after law revisions.\n\n[Sources]\n- National Police Agency Bicycle Portal: https://www.npa.go.jp/bureau/traffic/bicycle/portal/\n- e-Gov Law Search: https://laws.e-gov.go.jp/\n- Government Public Relations: https://www.gov-online.go.jp/\n\n[Location Data]\n- This app uses GPS location data.\n- Location data is processed on-device only and not sent to external servers.\n\n[Data Handling]\n- Ride history is stored locally on device only.\n- Learning content is fetched from servers and cached locally.\n- OpenStreetMap data is used for traffic sign locations."
+}

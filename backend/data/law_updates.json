@@ -1,0 +1,32 @@
+[
+  {
+    "id": "update_001",
+    "title": "自転車の交通反則金制度（青切符）導入決定",
+    "summary": "2026年4月1日から16歳以上を対象に反則金制度が導入されます",
+    "law_reference": "改正道路交通法（2024年5月成立）",
+    "source_url": "https://www.npa.go.jp/bureau/traffic/bicycle/portal/system.html",
+    "effective_date": "2026-04-01",
+    "published_at": "2025-01-15T00:00:00Z",
+    "is_published": true
+  },
+  {
+    "id": "update_002",
+    "title": "自転車のながらスマホ罰則強化",
+    "summary": "2024年11月1日から自転車運転中のスマートフォン使用に対する罰則が強化されました",
+    "law_reference": "道路交通法第71条第5号の5",
+    "source_url": "https://www.npa.go.jp/bureau/traffic/bicycle/portal/system.html",
+    "effective_date": "2024-11-01",
+    "published_at": "2025-01-15T00:00:00Z",
+    "is_published": true
+  },
+  {
+    "id": "update_003",
+    "title": "全年齢ヘルメット着用努力義務化",
+    "summary": "2023年4月1日から全ての自転車利用者にヘルメット着用が努力義務化されました",
+    "law_reference": "道路交通法第63条の11",
+    "source_url": "https://www.npa.go.jp/bureau/traffic/bicycle/portal/system.html",
+    "effective_date": "2023-04-01",
+    "published_at": "2025-01-15T00:00:00Z",
+    "is_published": true
+  }
+]

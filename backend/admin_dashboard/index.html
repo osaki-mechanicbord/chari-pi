@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHARI-PI 管理ダッシュボード</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0E2A;--card:#1A1F45;--surface:#141836;--primary:#2979FF;--accent:#00E5FF;--green:#76FF03;--danger:#F44336;--warning:#FF9800;--text:#fff;--text2:#B0B8D0;--muted:#6E7491;--divider:#2A2F55}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-box{background:var(--card);padding:40px;border-radius:20px;border:1px solid var(--divider);width:380px;text-align:center}
+.login-box h1{font-size:24px;margin-bottom:8px}
+.login-box p{color:var(--muted);margin-bottom:24px;font-size:14px}
+.login-box input{width:100%;padding:14px;background:var(--surface);border:1px solid var(--divider);border-radius:10px;color:var(--text);font-size:15px;margin-bottom:16px;outline:none}
+.login-box input:focus{border-color:var(--accent)}
+.btn{padding:12px 24px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-primary{background:var(--primary);color:#fff;width:100%}
+.btn-primary:hover{background:#1565C0}
+.btn-accent{background:var(--accent);color:#000}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-green{background:var(--green);color:#000}
+.btn-sm{padding:8px 16px;font-size:13px}
+.nav{background:var(--surface);border-bottom:1px solid var(--divider);padding:0 24px;display:flex;align-items:center;height:60px;gap:24px;position:sticky;top:0;z-index:100}
+.nav h2{font-size:18px;color:var(--accent);margin-right:auto}
+.nav-tab{padding:8px 16px;color:var(--muted);cursor:pointer;border-radius:8px;font-size:14px;transition:.2s}
+.nav-tab:hover,.nav-tab.active{color:var(--text);background:var(--card)}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);padding:20px;border-radius:14px;border:1px solid var(--divider)}
+.stat-card .number{font-size:32px;font-weight:bold;color:var(--accent)}
+.stat-card .label{color:var(--muted);font-size:13px;margin-top:4px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.toolbar select,.toolbar input[type=text]{padding:10px 14px;background:var(--surface);border:1px solid var(--divider);border-radius:8px;color:var(--text);font-size:14px;outline:none}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--divider);font-size:14px}
+.table th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.table tr:hover{background:var(--surface)}
+.badge{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600}
+.badge-published{background:rgba(118,255,3,.15);color:var(--green)}
+.badge-draft{background:rgba(255,152,0,.15);color:var(--warning)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:200}
+.modal{background:var(--card);border-radius:16px;border:1px solid var(--divider);width:90%;max-width:700px;max-height:90vh;overflow-y:auto;padding:28px}
+.modal h3{margin-bottom:20px;font-size:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;color:var(--text2);font-size:13px;margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px;background:var(--surface);border:1px solid var(--divider);border-radius:8px;color:var(--text);font-size:14px;outline:none}
+.form-group textarea{min-height:120px;resize:vertical}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}
+.tag{display:inline-block;background:var(--surface);color:var(--text2);padding:4px 8px;border-radius:6px;font-size:12px;margin:2px}
+.empty{text-align:center;padding:60px;color:var(--muted)}
+.toast{position:fixed;top:80px;right:24px;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:300;animation:slideIn .3s}
+.toast-success{background:var(--green);color:#000}
+.toast-error{background:var(--danger);color:#fff}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const API = window.location.origin;
+let token = localStorage.getItem('admin_token') || '';
+let currentTab = 'rules';
+
+function api(path, opts = {}) {
+  const headers = {'Content-Type':'application/json'};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return fetch(`${API}${path}`, {...opts, headers}).then(async r => {
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'API Error');
+    return d;
+  });
+}
+
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function renderLogin() {
+  document.getElementById('app').innerHTML = `
+    <div class="login-page">
+      <div class="login-box">
+        <h1>CHARI-PI</h1>
+        <p>管理ダッシュボード</p>
+        <input type="password" id="pw" placeholder="管理者パスワード" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="btn btn-primary" onclick="doLogin()">ログイン</button>
+      </div>
+    </div>`;
+}
+
+async function doLogin() {
+  try {
+    const pw = document.getElementById('pw').value;
+    const r = await api('/api/admin/login', {method:'POST', body:JSON.stringify({password:pw})});
+    token = r.token;
+    localStorage.setItem('admin_token', token);
+    renderDashboard();
+  } catch(e) { toast('パスワードが正しくありません', 'error'); }
+}
+
+function logout() { token=''; localStorage.removeItem('admin_token'); renderLogin(); }
+
+async function renderDashboard() {
+  document.getElementById('app').innerHTML = `
+    <nav class="nav">
+      <h2>CHARI-PI Admin</h2>
+      <div class="nav-tab ${currentTab==='rules'?'active':''}" onclick="switchTab('rules')">ルール管理</div>
+      <div class="nav-tab ${currentTab==='quizzes'?'active':''}" onclick="switchTab('quizzes')">クイズ管理</div>
+      <div class="nav-tab ${currentTab==='updates'?'active':''}" onclick="switchTab('updates')">法改正情報</div>
+      <div class="nav-tab ${currentTab==='egov'?'active':''}" onclick="switchTab('egov')">e-Gov検索</div>
+      <div class="nav-tab" onclick="logout()" style="color:var(--danger)">ログアウト</div>
+    </nav>
+    <div class="container">
+      <div id="stats-area"></div>
+      <div id="content-area"></div>
+    </div>
+    <div id="modal-area"></div>`;
+  await loadStats();
+  switchTab(currentTab);
+}
+
+async function loadStats() {
+  try {
+    const s = await api('/api/v1/stats');
+    document.getElementById('stats-area').innerHTML = `
+      <div class="stats">
+        <div class="stat-card"><div class="number">${s.total_rules}</div><div class="label">公開ルール数</div></div>
+        <div class="stat-card"><div class="number">${s.total_quizzes}</div><div class="label">クイズ問題数</div></div>
+        <div class="stat-card"><div class="number">${s.total_updates}</div><div class="label">法改正情報</div></div>
+        <div class="stat-card"><div class="number">${s.categories?.length||0}</div><div class="label">カテゴリ数</div></div>
+      </div>`;
+  } catch(e) {}
+}
+
+function switchTab(tab) { currentTab=tab; loadTab(); renderDashboard(); }
+
+async function loadTab() {
+  const area = document.getElementById('content-area');
+  if (!area) return;
+  if (currentTab === 'rules') await loadRules();
+  else if (currentTab === 'quizzes') await loadQuizzes();
+  else if (currentTab === 'updates') await loadUpdates();
+  else if (currentTab === 'egov') renderEgov();
+}
+
+const CATS = {basic:'基本ルール',intersection:'交差点・信号',road:'道路走行',equipment:'装備・車体',prohibition:'禁止事項',safety:'安全対策',insurance:'保険',new_law:'新制度',registration:'登録'};
+
+async function loadRules() {
+  const r = await api('/api/admin/rules');
+  const rules = r.data;
+  document.getElementById('content-area').innerHTML = `
+    <div class="toolbar">
+      <h3>ルール管理 (${rules.length}件)</h3>
+      <button class="btn btn-accent btn-sm" onclick="showRuleForm()">+ 新規ルール追加</button>
+    </div>
+    <table class="table">
+      <thead><tr><th>タイトル</th><th>カテゴリ</th><th>出典</th><th>状態</th><th>Ver</th><th>操作</th></tr></thead>
+      <tbody>${rules.map(r => `
+        <tr>
+          <td><strong>${r.title}</strong><br><span style="color:var(--muted);font-size:12px">${r.summary||''}</span></td>
+          <td><span class="tag">${CATS[r.category]||r.category}</span></td>
+          <td style="font-size:12px;color:var(--text2)">${r.law_reference||'-'}</td>
+          <td><span class="badge ${r.is_published?'badge-published':'badge-draft'}">${r.is_published?'公開':'下書き'}</span></td>
+          <td style="color:var(--muted)">v${r.version||1}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick='showRuleForm(${JSON.stringify(r).replace(/'/g,"&#39;")})' style="margin-right:6px">編集</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteRule('${r.id}')">削除</button>
+          </td>
+        </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function showRuleForm(rule=null) {
+  const isEdit = !!rule;
+  const r = rule || {};
+  document.getElementById('modal-area').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h3>${isEdit?'ルール編集':'新規ルール作成'}</h3>
+        <div class="form-group"><label>タイトル</label><input id="f_title" value="${r.title||''}"></div>
+        <div class="form-row">
+          <div class="form-group"><label>カテゴリ</label><select id="f_cat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${r.category===k?'selected':''}>${v}</option>`).join('')}</select></div>
+          <div class="form-group"><label>アイコン (Material Icons名)</label><input id="f_icon" value="${r.icon||'article'}"></div>
+        </div>
+        <div class="form-group"><label>概要</label><input id="f_summary" value="${r.summary||''}"></div>
+        <div class="form-group"><label>本文</label><textarea id="f_content">${r.content||''}</textarea></div>
+        <div class="form-group"><label>ポイント（改行区切り）</label><textarea id="f_points" style="min-height:80px">${(r.key_points||[]).join('\n')}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>法令参照</label><input id="f_law" value="${r.law_reference||''}"></div>
+          <div class="form-group"><label>罰則</label><input id="f_penalty" value="${r.penalty||''}"></div>
+        </div>
+        <div class="form-group"><label>出典URL</label><input id="f_source" value="${r.source_url||''}"></div>
+        <div class="form-group"><label><input type="checkbox" id="f_pub" ${r.is_published?'checked':''}> 公開する</label></div>
+        <div class="form-actions">
+          <button class="btn btn-sm" onclick="closeModal()" style="background:var(--surface);color:var(--text)">キャンセル</button>
+          <button class="btn btn-green btn-sm" onclick="saveRule('${r.id||''}')">${isEdit?'更新':'作成'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function saveRule(id) {
+  const data = {
+    title: document.getElementById('f_title').value,
+    category: document.getElementById('f_cat').value,
+    icon: document.getElementById('f_icon').value,
+    summary: document.getElementById('f_summary').value,
+    content: document.getElementById('f_content').value,
+    key_points: document.getElementById('f_points').value.split('\n').filter(Boolean),
+    law_reference: document.getElementById('f_law').value,
+    penalty: document.getElementById('f_penalty').value,
+    source_url: document.getElementById('f_source').value,
+    is_published: document.getElementById('f_pub').checked,
+  };
+  try {
+    if (id) await api(`/api/admin/rules/${id}`, {method:'PUT', body:JSON.stringify(data)});
+    else await api('/api/admin/rules', {method:'POST', body:JSON.stringify(data)});
+    toast(id ? 'ルールを更新しました' : 'ルールを作成しました');
+    closeModal();
+    await loadStats();
+    await loadRules();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function deleteRule(id) {
+  if (!confirm('このルールを削除しますか？')) return;
+  try {
+    await api(`/api/admin/rules/${id}`, {method:'DELETE'});
+    toast('ルールを削除しました');
+    await loadStats();
+    await loadRules();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function loadQuizzes() {
+  const r = await api('/api/admin/quizzes');
+  const quizzes = r.data;
+  document.getElementById('content-area').innerHTML = `
+    <div class="toolbar">
+      <h3>クイズ管理 (${quizzes.length}問)</h3>
+      <button class="btn btn-accent btn-sm" onclick="showQuizForm()">+ 新規クイズ追加</button>
+    </div>
+    <table class="table">
+      <thead><tr><th>問題</th><th>カテゴリ</th><th>難易度</th><th>操作</th></tr></thead>
+      <tbody>${quizzes.map(q => `
+        <tr>
+          <td><strong>${q.question}</strong><br><span style="color:var(--green);font-size:12px">正解: ${q.options[q.correct_index]}</span></td>
+          <td><span class="tag">${CATS[q.category]||q.category}</span></td>
+          <td><span class="tag">${{easy:'初級',medium:'中級',hard:'上級'}[q.difficulty]||q.difficulty}</span></td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick='showQuizForm(${JSON.stringify(q).replace(/'/g,"&#39;")})' style="margin-right:6px">編集</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteQuiz('${q.id}')">削除</button>
+          </td>
+        </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function showQuizForm(quiz=null) {
+  const isEdit = !!quiz;
+  const q = quiz || {};
+  const opts = q.options || ['','','',''];
+  document.getElementById('modal-area').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h3>${isEdit?'クイズ編集':'新規クイズ作成'}</h3>
+        <div class="form-group"><label>問題文</label><textarea id="qf_q">${q.question||''}</textarea></div>
+        <div class="form-group"><label>選択肢A</label><input id="qf_o0" value="${opts[0]||''}"></div>
+        <div class="form-group"><label>選択肢B</label><input id="qf_o1" value="${opts[1]||''}"></div>
+        <div class="form-group"><label>選択肢C</label><input id="qf_o2" value="${opts[2]||''}"></div>
+        <div class="form-group"><label>選択肢D</label><input id="qf_o3" value="${opts[3]||''}"></div>
+        <div class="form-row">
+          <div class="form-group"><label>正解番号 (0=A,1=B,2=C,3=D)</label><input type="number" id="qf_ci" min="0" max="3" value="${q.correct_index||0}"></div>
+          <div class="form-group"><label>難易度</label><select id="qf_diff"><option value="easy" ${q.difficulty==='easy'?'selected':''}>初級</option><option value="medium" ${q.difficulty==='medium'?'selected':''}>中級</option><option value="hard" ${q.difficulty==='hard'?'selected':''}>上級</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>カテゴリ</label><select id="qf_cat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${q.category===k?'selected':''}>${v}</option>`).join('')}</select></div>
+          <div class="form-group"><label>関連ルールID</label><input id="qf_rid" value="${q.rule_id||''}"></div>
+        </div>
+        <div class="form-group"><label>解説</label><textarea id="qf_exp">${q.explanation||''}</textarea></div>
+        <div class="form-actions">
+          <button class="btn btn-sm" onclick="closeModal()" style="background:var(--surface);color:var(--text)">キャンセル</button>
+          <button class="btn btn-green btn-sm" onclick="saveQuiz('${q.id||''}')">${isEdit?'更新':'作成'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function saveQuiz(id) {
+  const data = {
+    question: document.getElementById('qf_q').value,
+    options: [0,1,2,3].map(i => document.getElementById(`qf_o${i}`).value),
+    correct_index: parseInt(document.getElementById('qf_ci').value),
+    difficulty: document.getElementById('qf_diff').value,
+    category: document.getElementById('qf_cat').value,
+    rule_id: document.getElementById('qf_rid').value,
+    explanation: document.getElementById('qf_exp').value,
+  };
+  try {
+    if (id) await api(`/api/admin/quizzes/${id}`, {method:'PUT', body:JSON.stringify(data)});
+    else await api('/api/admin/quizzes', {method:'POST', body:JSON.stringify(data)});
+    toast(id ? 'クイズを更新しました' : 'クイズを作成しました');
+    closeModal();
+    await loadStats();
+    await loadQuizzes();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function deleteQuiz(id) {
+  if (!confirm('このクイズを削除しますか？')) return;
+  try {
+    await api(`/api/admin/quizzes/${id}`, {method:'DELETE'});
+    toast('クイズを削除しました');
+    await loadStats();
+    await loadQuizzes();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function loadUpdates() {
+  const r = await api('/api/admin/law-updates');
+  const updates = r.data;
+  document.getElementById('content-area').innerHTML = `
+    <div class="toolbar">
+      <h3>法改正情報 (${updates.length}件)</h3>
+      <button class="btn btn-accent btn-sm" onclick="showUpdateForm()">+ 新規情報追加</button>
+    </div>
+    <table class="table">
+      <thead><tr><th>タイトル</th><th>施行日</th><th>法令参照</th><th>状態</th><th>操作</th></tr></thead>
+      <tbody>${updates.map(u => `
+        <tr>
+          <td><strong>${u.title}</strong><br><span style="color:var(--muted);font-size:12px">${u.summary||''}</span></td>
+          <td>${u.effective_date||'-'}</td>
+          <td style="font-size:12px;color:var(--text2)">${u.law_reference||'-'}</td>
+          <td><span class="badge ${u.is_published?'badge-published':'badge-draft'}">${u.is_published?'公開':'下書き'}</span></td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick='showUpdateForm(${JSON.stringify(u).replace(/'/g,"&#39;")})' style="margin-right:6px">編集</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteUpdate('${u.id}')">削除</button>
+          </td>
+        </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function showUpdateForm(upd=null) {
+  const isEdit = !!upd;
+  const u = upd || {};
+  document.getElementById('modal-area').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h3>${isEdit?'法改正情報編集':'新規法改正情報'}</h3>
+        <div class="form-group"><label>タイトル</label><input id="uf_title" value="${u.title||''}"></div>
+        <div class="form-group"><label>概要</label><textarea id="uf_summary">${u.summary||''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>施行日</label><input type="date" id="uf_date" value="${u.effective_date||''}"></div>
+          <div class="form-group"><label>法令参照</label><input id="uf_law" value="${u.law_reference||''}"></div>
+        </div>
+        <div class="form-group"><label>出典URL</label><input id="uf_source" value="${u.source_url||''}"></div>
+        <div class="form-group"><label><input type="checkbox" id="uf_pub" ${u.is_published?'checked':''}> 公開する</label></div>
+        <div class="form-actions">
+          <button class="btn btn-sm" onclick="closeModal()" style="background:var(--surface);color:var(--text)">キャンセル</button>
+          <button class="btn btn-green btn-sm" onclick="saveUpdate('${u.id||''}')">${isEdit?'更新':'作成'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function saveUpdate(id) {
+  const data = {
+    title: document.getElementById('uf_title').value,
+    summary: document.getElementById('uf_summary').value,
+    effective_date: document.getElementById('uf_date').value,
+    law_reference: document.getElementById('uf_law').value,
+    source_url: document.getElementById('uf_source').value,
+    is_published: document.getElementById('uf_pub').checked,
+  };
+  try {
+    if (id) await api(`/api/admin/law-updates/${id}`, {method:'PUT', body:JSON.stringify(data)});
+    else await api('/api/admin/law-updates', {method:'POST', body:JSON.stringify(data)});
+    toast(id ? '法改正情報を更新しました' : '法改正情報を作成しました');
+    closeModal();
+    await loadStats();
+    await loadUpdates();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function deleteUpdate(id) {
+  if (!confirm('この法改正情報を削除しますか？')) return;
+  try {
+    await api(`/api/admin/law-updates/${id}`, {method:'DELETE'});
+    toast('法改正情報を削除しました');
+    await loadStats();
+    await loadUpdates();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderEgov() {
+  document.getElementById('content-area').innerHTML = `
+    <h3 style="margin-bottom:16px">e-Gov 法令検索API連携</h3>
+    <div class="stat-card" style="margin-bottom:16px">
+      <p style="color:var(--text2);font-size:14px;line-height:1.8">
+        e-Gov法令検索API（V2）を使用して、道路交通法の最新条文をリアルタイムで取得できます。<br>
+        法改正があった場合、ここで最新の条文を確認し、ルールの内容を更新してください。<br>
+        <strong style="color:var(--accent)">出典: e-Gov法令検索 (https://laws.e-gov.go.jp/)</strong>
+      </p>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="egov_keyword" placeholder="キーワード検索 (例: 道路交通法)" style="flex:1" onkeydown="if(event.key==='Enter')searchEgov()">
+      <button class="btn btn-accent btn-sm" onclick="searchEgov()">検索</button>
+      <button class="btn btn-primary btn-sm" onclick="fetchRoadTrafficLaw()">道路交通法を取得</button>
+    </div>
+    <div id="egov_result" style="margin-top:16px"></div>`;
+}
+
+async function searchEgov() {
+  const kw = document.getElementById('egov_keyword').value;
+  if (!kw) return;
+  document.getElementById('egov_result').innerHTML = '<p style="color:var(--muted)">検索中...</p>';
+  try {
+    const r = await api(`/api/v1/egov/search?keyword=${encodeURIComponent(kw)}`);
+    const data = r.data;
+    if (data && data.law_list) {
+      document.getElementById('egov_result').innerHTML = `
+        <p style="color:var(--text2);margin-bottom:12px">${data.law_list.length}件の法令が見つかりました</p>
+        <table class="table"><thead><tr><th>法令名</th><th>法令番号</th></tr></thead>
+        <tbody>${data.law_list.slice(0,20).map(l => `
+          <tr><td>${l.law_title||l.law_name||''}</td><td style="color:var(--muted)">${l.law_no||l.law_num||''}</td></tr>
+        `).join('')}</tbody></table>`;
+    } else {
+      document.getElementById('egov_result').innerHTML = `<pre style="color:var(--text2);font-size:13px;white-space:pre-wrap">${JSON.stringify(data,null,2)}</pre>`;
+    }
+  } catch(e) {
+    document.getElementById('egov_result').innerHTML = `<p style="color:var(--danger)">${e.message}</p>`;
+  }
+}
+
+async function fetchRoadTrafficLaw() {
+  document.getElementById('egov_result').innerHTML = '<p style="color:var(--muted)">道路交通法データを取得中...</p>';
+  try {
+    const r = await api('/api/v1/egov/law/335AC0000000105');
+    document.getElementById('egov_result').innerHTML = `
+      <div class="stat-card">
+        <p style="color:var(--green);font-weight:bold;margin-bottom:8px">道路交通法データ取得成功</p>
+        <p style="color:var(--text2);font-size:13px">出典: e-Gov法令検索API v2</p>
+        <pre style="color:var(--text2);font-size:12px;max-height:400px;overflow-y:auto;white-space:pre-wrap;margin-top:12px">${JSON.stringify(r.data,null,2).substring(0,5000)}...</pre>
+      </div>`;
+  } catch(e) {
+    document.getElementById('egov_result').innerHTML = `<p style="color:var(--danger)">取得エラー: ${e.message}<br><span style="color:var(--muted);font-size:12px">e-Gov APIが一時的に利用できない可能性があります。</span></p>`;
+  }
+}
+
+function closeModal() { document.getElementById('modal-area').innerHTML = ''; }
+
+// Init
+if (token) renderDashboard();
+else renderLogin();
+</script>
+</body>
+</html>
