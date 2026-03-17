@@ -1,7 +1,8 @@
 workflows:
   # ============================================
-  # Default Workflow (Workflow Editor + YAML hybrid)
-  # iOS + Android Release Build
+  # iOS Release + Android Debug Build
+  # iOS: App Store signing -> TestFlight
+  # Android: Debug build (no signing required)
   # ============================================
   default-workflow:
     name: Default Workflow
@@ -28,11 +29,9 @@ workflows:
             --create
           keychain add-certificates
           xcode-project use-profiles
-      - name: Build Android AAB (Release)
+      - name: Build Android APK (Debug)
         script: |
-          flutter build appbundle --release \
-            --build-name=1.0.0 \
-            --build-number=$PROJECT_BUILD_NUMBER
+          flutter build apk --debug
       - name: Build iOS IPA (Release)
         script: |
           flutter build ipa --release \
@@ -40,7 +39,6 @@ workflows:
             --build-number=$PROJECT_BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
-      - build/app/outputs/bundle/**/*.aab
       - build/app/outputs/flutter-apk/*.apk
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
