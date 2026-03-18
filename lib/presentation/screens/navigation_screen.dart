@@ -122,6 +122,8 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.cycleguard.safety',
                 ),
+                // Cycleway polylines (green overlay)
+                _buildCyclewayOverlay(locationProvider.nearbyNodes),
                 if (locationProvider.routePoints.length >= 2)
                   PolylineLayer(
                     polylines: [
@@ -257,33 +259,84 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
     );
   }
 
+  /// Build cycleway polyline overlay for bicycle lanes
+  Widget _buildCyclewayOverlay(List<OSMNode> nodes) {
+    final cycleways = nodes.where((n) =>
+      n.type == OSMNodeType.cycleway &&
+      n.wayNodes != null &&
+      n.wayNodes!.length >= 2
+    ).toList();
+
+    if (cycleways.isEmpty) return const SizedBox.shrink();
+
+    return PolylineLayer(
+      polylines: cycleways.map((cw) => Polyline(
+        points: cw.wayNodes!,
+        color: AppColors.accentGreen.withValues(alpha: 0.6),
+        strokeWidth: 5.0,
+        pattern: const StrokePattern.dotted(),
+      )).toList(),
+    );
+  }
+
+  /// Build map markers for all OSM node types
   List<Marker> _buildOSMMarkers(List<OSMNode> nodes) {
     return nodes.where((n) => (n.distanceFromUser ?? double.infinity) <= 300).map((node) {
-      IconData iconData;
-      Color color;
-      switch (node.type) {
-        case OSMNodeType.stopSign:
-          iconData = Icons.front_hand;
-          color = AppColors.danger;
-        case OSMNodeType.trafficSignal:
-          iconData = Icons.traffic;
-          color = AppColors.warning;
-        case OSMNodeType.oneway:
-          iconData = Icons.arrow_forward;
-          color = AppColors.info;
-      }
+      final config = _getMarkerConfig(node);
+      final size = node.penaltyRisk >= 4 ? 40.0 : 34.0;
+
       return Marker(
         point: node.position,
-        width: 36, height: 36,
+        width: size, height: size,
         child: Container(
           decoration: BoxDecoration(
-            color: color, shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 8)],
+            color: config.color,
+            shape: BoxShape.circle,
+            border: node.isWrongWay
+              ? Border.all(color: Colors.white, width: 2)
+              : null,
+            boxShadow: [BoxShadow(
+              color: config.color.withValues(alpha: 0.5),
+              blurRadius: node.penaltyRisk >= 4 ? 12 : 8,
+            )],
           ),
-          child: Icon(iconData, color: Colors.white, size: 20),
+          child: Icon(config.icon, color: Colors.white, size: size * 0.55),
         ),
       );
     }).toList();
+  }
+
+  _MarkerConfig _getMarkerConfig(OSMNode node) {
+    switch (node.type) {
+      case OSMNodeType.stopSign:
+        return _MarkerConfig(Icons.front_hand, AppColors.danger);
+      case OSMNodeType.trafficSignal:
+        return _MarkerConfig(Icons.traffic, AppColors.warning);
+      case OSMNodeType.oneway:
+        return node.isWrongWay
+          ? _MarkerConfig(Icons.warning_amber, AppColors.danger)
+          : _MarkerConfig(Icons.arrow_forward, AppColors.info);
+      case OSMNodeType.pedestrianRoad:
+        return _MarkerConfig(Icons.directions_walk, const Color(0xFFE91E63));
+      case OSMNodeType.footway:
+        return _MarkerConfig(Icons.directions_walk, const Color(0xFFFF9800));
+      case OSMNodeType.footwayNoBicycle:
+        return _MarkerConfig(Icons.no_transfer, AppColors.danger);
+      case OSMNodeType.cycleway:
+        return _MarkerConfig(Icons.pedal_bike, AppColors.accentGreen);
+      case OSMNodeType.crossing:
+        return _MarkerConfig(Icons.transfer_within_a_station, const Color(0xFF2196F3));
+      case OSMNodeType.noBicycle:
+        return _MarkerConfig(Icons.block, AppColors.danger);
+      case OSMNodeType.dismount:
+        return _MarkerConfig(Icons.directions_walk, const Color(0xFF9C27B0));
+      case OSMNodeType.speedLimit:
+        return _MarkerConfig(Icons.speed, const Color(0xFF607D8B));
+      case OSMNodeType.accidentZone:
+        return _MarkerConfig(Icons.car_crash, const Color(0xFFB71C1C));
+      case OSMNodeType.enforcementZone:
+        return _MarkerConfig(Icons.local_police, const Color(0xFF1A237E));
+    }
   }
 
   Widget _buildInfoCard(LocationProvider provider, L10n l) {
@@ -411,4 +464,11 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
       ),
     );
   }
+}
+
+/// Simple config holder for marker icon and color
+class _MarkerConfig {
+  final IconData icon;
+  final Color color;
+  _MarkerConfig(this.icon, this.color);
 }

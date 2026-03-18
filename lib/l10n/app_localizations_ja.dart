@@ -126,6 +126,51 @@ class L10nJa extends L10n {
   String get nodeOneway => '一方通行';
 
   @override
+  String get nodeWrongWay => '逆走警告';
+
+  @override
+  String get nodePedestrianRoad => '歩行者専用道路';
+
+  @override
+  String get nodeFootway => '歩道';
+
+  @override
+  String get nodeFootwayNoBicycle => '自転車禁止歩道';
+
+  @override
+  String get nodeCycleway => '自転車専用道路';
+
+  @override
+  String get nodeCrossing => '横断歩道';
+
+  @override
+  String get nodeNoBicycle => '自転車通行禁止';
+
+  @override
+  String get nodeDismount => '押し歩き区間';
+
+  @override
+  String get nodeSpeedLimit => '速度制限';
+
+  @override
+  String get nodeAccidentZone => '事故多発地点';
+
+  @override
+  String get nodeEnforcementZone => '取り締まりエリア';
+
+  @override
+  String get penaltyWrongWay => '逆走は3ヶ月以下の懲役又は5万円以下の罰金';
+
+  @override
+  String get penaltyNoBicycle => '通行禁止違反: 5万円以下の罰金';
+
+  @override
+  String get penaltyStopSign => '一時停止無視: 青切符の対象';
+
+  @override
+  String get penaltyEnforcement => '取り締まり重点エリアです';
+
+  @override
   String get logTitle => '走行履歴';
 
   @override

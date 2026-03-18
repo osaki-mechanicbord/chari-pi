@@ -10,6 +10,7 @@ import '../../core/utils/distance_calculator.dart' as utils;
 import '../../core/services/osm_service.dart';
 import '../../core/services/tts_service.dart';
 import '../../core/services/vibration_service.dart';
+import '../../core/utils/gps_kalman_filter.dart';
 
 enum RideStatus { idle, tracking, paused }
 enum GpsStatus { unavailable, searching, lowAccuracy, mediumAccuracy, highAccuracy }
@@ -37,13 +38,13 @@ class LocationProvider extends ChangeNotifier {
   List<OSMNode> _warningNodes = [];
   DateTime? _lastOsmFetch;
   static const Duration _osmFetchInterval = Duration(seconds: 10);
-  static const double _osmFetchMinDistance = 50.0; // meters before re-fetching
+  static const double _osmFetchMinDistance = 50.0;
   double? _lastOsmFetchLat;
   double? _lastOsmFetchLon;
 
-  // Warning deduplication
-  final Set<int> _warnedNodeIds = {};
-  static const double _warningResetDistance = 150.0; // reset warning after moving away
+  // Warning deduplication: nodeId -> last alert stage
+  final Map<int, int> _warnedNodeStages = {};
+  static const double _warningResetDistance = 150.0;
 
   // Route tracking
   List<LatLng> _routePoints = [];
@@ -55,7 +56,7 @@ class LocationProvider extends ChangeNotifier {
   Box<String>? _rideBox;
 
   // Settings (injected from SettingsProvider)
-  double _alertDistance = 50.0;
+  double _alertDistance = 80.0;
   bool _voiceAlertEnabled = true;
   bool _vibrationAlertEnabled = true;
   String _localeCode = 'ja';
@@ -63,6 +64,9 @@ class LocationProvider extends ChangeNotifier {
   // Alert services
   final TtsService _ttsService = TtsService();
   final VibrationService _vibrationService = VibrationService();
+
+  // GPS Kalman filter for position smoothing
+  final GpsKalmanFilter _kalmanFilter = GpsKalmanFilter();
 
   // GPS stream subscription
   StreamSubscription? _gpsSubscription;
@@ -118,69 +122,74 @@ class LocationProvider extends ChangeNotifier {
     _ttsService.setLanguage(code);
   }
 
-  // --- GPS Position Handling (called by platform-specific code) ---
+  // --- GPS Position Handling ---
   void onPositionUpdate(double lat, double lon, double accuracy, double speed, double heading) {
     final now = DateTime.now();
 
-    // Update GPS status
     _gpsStatus = _classifyAccuracy(accuracy);
 
     // Filter jitter: ignore updates with >100m accuracy
     if (accuracy > 100) return;
 
+    // Apply Kalman filter for position smoothing
+    final filtered = _kalmanFilter.process(
+      rawLat: lat,
+      rawLon: lon,
+      accuracy: accuracy,
+      rawSpeed: speed.isNaN || speed < 0 ? 0 : speed,
+      rawHeading: heading.isNaN ? _heading : heading,
+    );
+
+    final smoothLat = filtered.lat;
+    final smoothLon = filtered.lon;
+    final smoothHeading = filtered.heading;
+    final smoothSpeed = filtered.speed;
+
     // Calculate distance from previous point
     if (_prevLat != null && _prevLon != null) {
       final dist = utils.DistanceCalculator.calculateDistance(
-        _prevLat!, _prevLon!, lat, lon,
+        _prevLat!, _prevLon!, smoothLat, smoothLon,
       );
 
-      // Filter GPS noise: ignore micro-movements (<1m) unless enough time passed
       final timeDiff = _lastPositionTime != null
           ? now.difference(_lastPositionTime!).inMilliseconds
           : 5000;
       if (dist < 1.0 && timeDiff < 3000) return;
 
-      // Accumulate distance only when tracking
       if (_rideStatus == RideStatus.tracking) {
-        // Filter unreasonable jumps (>500m in single update = GPS glitch)
         if (dist < 500) {
           _totalDistance += dist;
         }
       }
     }
 
-    // Store previous position
-    _prevLat = lat;
-    _prevLon = lon;
+    _prevLat = smoothLat;
+    _prevLon = smoothLon;
     _lastPositionTime = now;
 
-    // Update current position
-    _latitude = lat;
-    _longitude = lon;
+    _latitude = smoothLat;
+    _longitude = smoothLon;
     _accuracy = accuracy;
-    _speed = speed.isNaN || speed < 0 ? 0 : speed;
-    _heading = heading.isNaN ? _heading : heading;
+    _speed = smoothSpeed;
+    _heading = smoothHeading;
 
-    // Add route point when tracking (every 5m+)
+    // Add route point when tracking
     if (_rideStatus == RideStatus.tracking) {
       if (_routePoints.isEmpty) {
-        _routePoints.add(LatLng(lat, lon));
+        _routePoints.add(LatLng(smoothLat, smoothLon));
       } else {
         final lastPt = _routePoints.last;
         final distFromLast = utils.DistanceCalculator.calculateDistance(
-          lastPt.latitude, lastPt.longitude, lat, lon,
+          lastPt.latitude, lastPt.longitude, smoothLat, smoothLon,
         );
         if (distFromLast >= 5.0) {
-          _routePoints.add(LatLng(lat, lon));
+          _routePoints.add(LatLng(smoothLat, smoothLon));
         }
       }
     }
 
-    // Fetch OSM data periodically
-    _fetchOsmDataIfNeeded(lat, lon);
-
-    // Update warning distances
-    _updateWarnings(lat, lon);
+    _fetchOsmDataIfNeeded(smoothLat, smoothLon);
+    _updateWarnings(smoothLat, smoothLon);
 
     notifyListeners();
   }
@@ -196,12 +205,10 @@ class LocationProvider extends ChangeNotifier {
   Future<void> _fetchOsmDataIfNeeded(double lat, double lon) async {
     final now = DateTime.now();
 
-    // Throttle: minimum interval between fetches
     if (_lastOsmFetch != null && now.difference(_lastOsmFetch!) < _osmFetchInterval) {
       return;
     }
 
-    // Distance check: only fetch if moved enough
     if (_lastOsmFetchLat != null && _lastOsmFetchLon != null) {
       final dist = utils.DistanceCalculator.calculateDistance(
         _lastOsmFetchLat!, _lastOsmFetchLon!, lat, lon,
@@ -219,14 +226,12 @@ class LocationProvider extends ChangeNotifier {
       _updateWarnings(lat, lon);
       notifyListeners();
     } catch (e) {
-      // Keep existing data on fetch failure
       if (kDebugMode) {
         debugPrint('OSM fetch error: $e');
       }
     }
   }
 
-  /// Force a fresh OSM fetch at the current position
   Future<void> refreshOsmData() async {
     _lastOsmFetch = null;
     _lastOsmFetchLat = null;
@@ -234,117 +239,164 @@ class LocationProvider extends ChangeNotifier {
     await _fetchOsmDataIfNeeded(_latitude, _longitude);
   }
 
-  // --- Warning System ---
+  // --- Enhanced Warning System with 3-stage alerts + wrong-way detection ---
   void _updateWarnings(double lat, double lon) {
-    // Update distances for all nearby nodes
+    final userPos = LatLng(lat, lon);
+
+    // Update distances and perform wrong-way detection for all nearby nodes
     final updatedNodes = _nearbyNodes.map((node) {
-      final dist = utils.DistanceCalculator.calculateDistance(
-        lat, lon,
-        node.position.latitude, node.position.longitude,
+      double distance;
+      // Use way-based distance for linear features (more accurate)
+      if (node.wayNodes != null && node.wayNodes!.length >= 2) {
+        distance = OSMNode.distanceToWay(userPos, node.wayNodes!);
+      } else {
+        distance = utils.DistanceCalculator.calculateDistance(
+          lat, lon, node.position.latitude, node.position.longitude,
+        );
+      }
+
+      // Wrong-way detection for oneway roads
+      bool wrongWay = node.isWrongWay;
+      WarningLevel? level = node.warningLevel;
+
+      if (node.type == OSMNodeType.oneway && node.wayBearing != null) {
+        // Only check wrong-way if user is close to the road (<15m)
+        if (distance < 15 && _heading > 0) {
+          wrongWay = OSMNode.isGoingWrongWay(_heading, node.wayBearing!);
+        } else {
+          wrongWay = false;
+        }
+      }
+
+      // Determine warning level based on type and distance
+      level = _classifyWarningLevel(node.type, distance, wrongWay);
+
+      return node.copyWith(
+        distanceFromUser: distance,
+        isWrongWay: wrongWay,
+        warningLevel: level,
       );
-      return node.copyWith(distanceFromUser: dist);
     }).toList()
       ..sort((a, b) => (a.distanceFromUser ?? 0).compareTo(b.distanceFromUser ?? 0));
 
     _nearbyNodes = updatedNodes;
 
-    // Find nodes within alert distance
-    final newWarnings = updatedNodes
-        .where((n) => (n.distanceFromUser ?? double.infinity) <= _alertDistance)
-        .toList();
+    // Collect all active warnings (within extended alert distance)
+    final maxAlertDist = _alertDistance * 1.6; // wider detection radius
+    final activeWarnings = updatedNodes.where((n) {
+      final dist = n.distanceFromUser ?? double.infinity;
+      if (dist > maxAlertDist) return false;
+      // Must have an alert stage > 0
+      final stage = _ttsService.getAlertStage(dist, n.type);
+      return stage > 0;
+    }).toList();
 
-    // Deduplication: only warn once per node until user moves away
-    final freshWarnings = <OSMNode>[];
-    for (final node in newWarnings) {
-      if (!_warnedNodeIds.contains(node.id)) {
-        freshWarnings.add(node);
-        _warnedNodeIds.add(node.id);
-        _warningsCount++;
-        if (node.type == OSMNodeType.stopSign) _stopSignCount++;
-        if (node.type == OSMNodeType.trafficSignal) _trafficSignalCount++;
+    // Sort by penalty risk (highest first), then distance
+    activeWarnings.sort((a, b) {
+      final riskCmp = b.penaltyRisk.compareTo(a.penaltyRisk);
+      if (riskCmp != 0) return riskCmp;
+      return (a.distanceFromUser ?? 0).compareTo(b.distanceFromUser ?? 0);
+    });
 
-        // Trigger alerts for fresh warnings only
-        if (_rideStatus == RideStatus.tracking) {
-          _triggerAlerts(node);
+    // 3-stage alert triggers for tracking mode
+    if (_rideStatus == RideStatus.tracking) {
+      for (final node in activeWarnings) {
+        final dist = node.distanceFromUser ?? double.infinity;
+        final stage = _ttsService.getAlertStage(dist, node.type);
+        if (stage <= 0) continue;
+
+        final prevStage = _warnedNodeStages[node.id] ?? 0;
+
+        // Trigger alert only when entering a new (higher) stage
+        if (stage > prevStage) {
+          _warnedNodeStages[node.id] = stage;
+          _triggerAlerts(node, stage);
+
+          if (prevStage == 0) {
+            _warningsCount++;
+            if (node.type == OSMNodeType.stopSign) _stopSignCount++;
+            if (node.type == OSMNodeType.trafficSignal) _trafficSignalCount++;
+          }
         }
       }
     }
 
-    // Reset warning for nodes the user has moved far away from
-    _warnedNodeIds.removeWhere((id) {
+    // Reset alerts for nodes the user has moved far away from
+    _warnedNodeStages.removeWhere((id, _) {
       final node = updatedNodes.where((n) => n.id == id).firstOrNull;
-      if (node == null) return true; // Node no longer in nearby list
+      if (node == null) return true;
       return (node.distanceFromUser ?? double.infinity) > _warningResetDistance;
     });
 
-    // Show all active warnings (within alert distance, including already-warned)
-    _warningNodes = newWarnings;
+    // Show top warnings in banner (max 3, sorted by risk)
+    _warningNodes = activeWarnings.take(3).toList();
   }
 
-  // --- Alert Triggers (TTS + Vibration) ---
-  void _triggerAlerts(OSMNode node) {
-    final dist = node.distanceFromUser?.round() ?? 0;
-    final isUrgent = dist <= 20;
+  /// Classify warning level based on type and distance
+  WarningLevel _classifyWarningLevel(OSMNodeType type, double distance, bool isWrongWay) {
+    switch (type) {
+      case OSMNodeType.oneway:
+        if (isWrongWay) return WarningLevel.danger;
+        if (distance < 30) return WarningLevel.warning;
+        return WarningLevel.caution;
 
-    // Voice alert
+      case OSMNodeType.pedestrianRoad:
+      case OSMNodeType.footwayNoBicycle:
+      case OSMNodeType.noBicycle:
+        if (distance < 10) return WarningLevel.danger;
+        if (distance < 30) return WarningLevel.warning;
+        return WarningLevel.caution;
+
+      case OSMNodeType.stopSign:
+        if (distance < 15) return WarningLevel.danger;
+        if (distance < 40) return WarningLevel.warning;
+        return WarningLevel.caution;
+
+      case OSMNodeType.trafficSignal:
+      case OSMNodeType.crossing:
+        if (distance < 15) return WarningLevel.warning;
+        return WarningLevel.caution;
+
+      case OSMNodeType.footway:
+      case OSMNodeType.dismount:
+        if (distance < 8) return WarningLevel.warning;
+        return WarningLevel.caution;
+
+      case OSMNodeType.enforcementZone:
+      case OSMNodeType.accidentZone:
+        if (distance < 100) return WarningLevel.caution;
+        return WarningLevel.info;
+
+      case OSMNodeType.cycleway:
+      case OSMNodeType.speedLimit:
+        return WarningLevel.info;
+    }
+  }
+
+  // --- Alert Triggers (TTS + Vibration) with 3-stage system ---
+  void _triggerAlerts(OSMNode node, int stage) {
+    // Voice alert with detailed 3-stage messages
     if (_voiceAlertEnabled) {
-      final message = _getWarningMessage(node, dist);
-      if (isUrgent) {
-        _ttsService.speakUrgentAlert(message);
-      } else {
-        _ttsService.speakWarning(message, priority: node.type == OSMNodeType.stopSign);
+      final message = _ttsService.getDetailedMessage(
+        node, stage, _localeCode,
+        userSpeed: speedKmh,
+      );
+      if (message.isNotEmpty) {
+        final level = node.warningLevel ?? WarningLevel.caution;
+        _ttsService.speakByLevel(message, level);
       }
     }
 
-    // Vibration alert
+    // Vibration alert scaled by stage
     if (_vibrationAlertEnabled) {
-      if (isUrgent) {
-        _vibrationService.urgentVibrate();
-      } else {
-        _vibrationService.warningVibrate();
+      switch (stage) {
+        case 3:
+          _vibrationService.urgentVibrate();
+        case 2:
+          _vibrationService.warningVibrate();
+        case 1:
+          _vibrationService.lightVibrate();
       }
-    }
-  }
-
-  String _getWarningMessage(OSMNode node, int distance) {
-    // Multi-language warning messages
-    switch (_localeCode) {
-      case 'en':
-        switch (node.type) {
-          case OSMNodeType.stopSign:
-            return 'Stop sign ahead, $distance meters';
-          case OSMNodeType.trafficSignal:
-            return 'Traffic signal ahead, $distance meters';
-          case OSMNodeType.oneway:
-            return 'One-way street ahead, $distance meters';
-        }
-      case 'ko':
-        switch (node.type) {
-          case OSMNodeType.stopSign:
-            return '${distance}\uBBF8\uD130 \uC55E \uC77C\uC2DC\uC815\uC9C0';
-          case OSMNodeType.trafficSignal:
-            return '${distance}\uBBF8\uD130 \uC55E \uC2E0\uD638\uB4F1';
-          case OSMNodeType.oneway:
-            return '${distance}\uBBF8\uD130 \uC55E \uC77C\uBC29\uD1B5\uD589';
-        }
-      case 'zh':
-        switch (node.type) {
-          case OSMNodeType.stopSign:
-            return '\u524D\u65B9${distance}\u7C73\u6709\u505C\u8F66\u6807\u5FD7';
-          case OSMNodeType.trafficSignal:
-            return '\u524D\u65B9${distance}\u7C73\u6709\u4EA4\u901A\u4FE1\u53F7\u706F';
-          case OSMNodeType.oneway:
-            return '\u524D\u65B9${distance}\u7C73\u5355\u884C\u9053';
-        }
-      default: // ja
-        switch (node.type) {
-          case OSMNodeType.stopSign:
-            return '${distance}\u30E1\u30FC\u30C8\u30EB\u5148\u306B\u4E00\u6642\u505C\u6B62';
-          case OSMNodeType.trafficSignal:
-            return '${distance}\u30E1\u30FC\u30C8\u30EB\u5148\u306B\u4FE1\u53F7\u6A5F';
-          case OSMNodeType.oneway:
-            return '${distance}\u30E1\u30FC\u30C8\u30EB\u5148\u306B\u4E00\u65B9\u901A\u884C';
-        }
     }
   }
 
@@ -357,18 +409,17 @@ class LocationProvider extends ChangeNotifier {
     _stopSignCount = 0;
     _trafficSignalCount = 0;
     _routePoints = [];
-    _warnedNodeIds.clear();
+    _warnedNodeStages.clear();
     _prevLat = null;
     _prevLon = null;
     _isDemoMode = demoMode;
+    _kalmanFilter.reset();
 
-    // Keep screen on during ride
     WakelockPlus.enable();
 
     if (demoMode) {
       _startDemoSimulation();
     }
-    // If not demo, GPS stream should already be feeding onPositionUpdate()
 
     notifyListeners();
   }
@@ -394,21 +445,20 @@ class LocationProvider extends ChangeNotifier {
     _rideStartTime = null;
     _isDemoMode = false;
     _warningNodes = [];
-    _warnedNodeIds.clear();
+    _warnedNodeStages.clear();
 
-    // Release screen lock and stop TTS
     WakelockPlus.disable();
     _ttsService.stop();
 
     notifyListeners();
   }
 
-  // --- Demo Mode (fallback when GPS unavailable) ---
+  // --- Enhanced Demo Mode with all node types ---
   void _startDemoSimulation() {
     _demoTimer?.cancel();
     _demoStep = 0;
 
-    // Realistic route near Shibuya Station with actual OSM-like data
+    // Realistic route near Shibuya Station
     final demoRoute = [
       [35.6580, 139.7016], [35.6583, 139.7020], [35.6586, 139.7025],
       [35.6590, 139.7028], [35.6594, 139.7032], [35.6598, 139.7035],
@@ -419,13 +469,37 @@ class LocationProvider extends ChangeNotifier {
       [35.6643, 139.7078], [35.6646, 139.7082],
     ];
 
-    // Simulated real-world traffic features
+    // Simulated traffic features covering all critical types
     _nearbyNodes = [
-      OSMNode(id: 90001, type: OSMNodeType.stopSign, position: const LatLng(35.6594, 139.7033), tags: {'highway': 'stop'}),
-      OSMNode(id: 90002, type: OSMNodeType.trafficSignal, position: const LatLng(35.6610, 139.7046), tags: {'highway': 'traffic_signals'}),
-      OSMNode(id: 90003, type: OSMNodeType.stopSign, position: const LatLng(35.6625, 139.7059), tags: {'highway': 'stop'}),
-      OSMNode(id: 90004, type: OSMNodeType.trafficSignal, position: const LatLng(35.6637, 139.7073), tags: {'highway': 'traffic_signals'}),
-      OSMNode(id: 90005, type: OSMNodeType.stopSign, position: const LatLng(35.6646, 139.7083), tags: {'highway': 'stop'}),
+      OSMNode(id: 90001, type: OSMNodeType.stopSign,
+        position: const LatLng(35.6594, 139.7033),
+        tags: const {'highway': 'stop'}),
+      OSMNode(id: 90002, type: OSMNodeType.trafficSignal,
+        position: const LatLng(35.6610, 139.7046),
+        tags: const {'highway': 'traffic_signals'}),
+      OSMNode(id: 90003, type: OSMNodeType.oneway,
+        position: const LatLng(35.6602, 139.7040),
+        tags: const {'oneway': 'yes'},
+        wayBearing: 45.0,
+        wayNodes: const [LatLng(35.6598, 139.7035), LatLng(35.6606, 139.7045)]),
+      OSMNode(id: 90004, type: OSMNodeType.pedestrianRoad,
+        position: const LatLng(35.6618, 139.7053),
+        tags: const {'highway': 'pedestrian'},
+        wayNodes: const [LatLng(35.6616, 139.7050), LatLng(35.6620, 139.7056)]),
+      OSMNode(id: 90005, type: OSMNodeType.crossing,
+        position: const LatLng(35.6625, 139.7059),
+        tags: const {'highway': 'crossing'}),
+      OSMNode(id: 90006, type: OSMNodeType.cycleway,
+        position: const LatLng(35.6631, 139.7066),
+        tags: const {'highway': 'cycleway'},
+        wayNodes: const [LatLng(35.6628, 139.7062), LatLng(35.6634, 139.7070)]),
+      OSMNode(id: 90007, type: OSMNodeType.footway,
+        position: const LatLng(35.6637, 139.7073),
+        tags: const {'highway': 'footway'},
+        wayNodes: const [LatLng(35.6635, 139.7070), LatLng(35.6639, 139.7076)]),
+      OSMNode(id: 90008, type: OSMNodeType.stopSign,
+        position: const LatLng(35.6646, 139.7083),
+        tags: const {'highway': 'stop'}),
     ];
 
     _demoTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
@@ -435,7 +509,7 @@ class LocationProvider extends ChangeNotifier {
       final lat = demoRoute[_demoStep][0];
       final lon = demoRoute[_demoStep][1];
       final acc = 5.0 + (_demoStep % 3) * 2.0;
-      final spd = 3.5 + (_demoStep % 5) * 0.8; // m/s (12-17 km/h)
+      final spd = 3.5 + (_demoStep % 5) * 0.8;
       final hdg = (_demoStep * 12.0) % 360;
 
       onPositionUpdate(lat, lon, acc, spd, hdg);

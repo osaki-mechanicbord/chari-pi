@@ -126,6 +126,51 @@ class L10nZh extends L10n {
   String get nodeOneway => '单行道';
 
   @override
+  String get nodeWrongWay => '逆行警告';
+
+  @override
+  String get nodePedestrianRoad => '行人专用道路';
+
+  @override
+  String get nodeFootway => '人行道';
+
+  @override
+  String get nodeFootwayNoBicycle => '禁止骑行人行道';
+
+  @override
+  String get nodeCycleway => '自行车专用道';
+
+  @override
+  String get nodeCrossing => '人行横道';
+
+  @override
+  String get nodeNoBicycle => '禁止自行车通行';
+
+  @override
+  String get nodeDismount => '推行区间';
+
+  @override
+  String get nodeSpeedLimit => '限速';
+
+  @override
+  String get nodeAccidentZone => '事故多发地点';
+
+  @override
+  String get nodeEnforcementZone => '执法重点区域';
+
+  @override
+  String get penaltyWrongWay => '逆行：最高3个月以下有期徒刑或5万日元以下罚款';
+
+  @override
+  String get penaltyNoBicycle => '禁止通行违规：最高5万日元以下罚款';
+
+  @override
+  String get penaltyStopSign => '闯停车标志：蓝色罚单对象';
+
+  @override
+  String get penaltyEnforcement => '交通执法重点区域';
+
+  @override
   String get logTitle => '骑行记录';
 
   @override

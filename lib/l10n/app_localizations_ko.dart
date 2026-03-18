@@ -126,6 +126,51 @@ class L10nKo extends L10n {
   String get nodeOneway => '일방통행';
 
   @override
+  String get nodeWrongWay => '역주행 경고';
+
+  @override
+  String get nodePedestrianRoad => '보행자 전용도로';
+
+  @override
+  String get nodeFootway => '보도';
+
+  @override
+  String get nodeFootwayNoBicycle => '자전거 금지 보도';
+
+  @override
+  String get nodeCycleway => '자전거 전용도로';
+
+  @override
+  String get nodeCrossing => '횡단보도';
+
+  @override
+  String get nodeNoBicycle => '자전거 통행 금지';
+
+  @override
+  String get nodeDismount => '하차 구간';
+
+  @override
+  String get nodeSpeedLimit => '속도 제한';
+
+  @override
+  String get nodeAccidentZone => '사고 다발 지점';
+
+  @override
+  String get nodeEnforcementZone => '단속 구역';
+
+  @override
+  String get penaltyWrongWay => '역주행: 3개월 이하 징역 또는 5만엔 이하 벌금';
+
+  @override
+  String get penaltyNoBicycle => '통행 금지 위반: 5만엔 이하 벌금';
+
+  @override
+  String get penaltyStopSign => '일시정지 무시: 청색 딱지 대상';
+
+  @override
+  String get penaltyEnforcement => '교통 단속 중점 구역';
+
+  @override
   String get logTitle => '라이딩 기록';
 
   @override

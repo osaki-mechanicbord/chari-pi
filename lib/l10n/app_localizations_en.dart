@@ -126,6 +126,52 @@ class L10nEn extends L10n {
   String get nodeOneway => 'One-way';
 
   @override
+  String get nodeWrongWay => 'Wrong way';
+
+  @override
+  String get nodePedestrianRoad => 'Pedestrian zone';
+
+  @override
+  String get nodeFootway => 'Sidewalk';
+
+  @override
+  String get nodeFootwayNoBicycle => 'No-cycling sidewalk';
+
+  @override
+  String get nodeCycleway => 'Cycle lane';
+
+  @override
+  String get nodeCrossing => 'Crosswalk';
+
+  @override
+  String get nodeNoBicycle => 'No cycling';
+
+  @override
+  String get nodeDismount => 'Dismount zone';
+
+  @override
+  String get nodeSpeedLimit => 'Speed limit';
+
+  @override
+  String get nodeAccidentZone => 'Accident zone';
+
+  @override
+  String get nodeEnforcementZone => 'Enforcement zone';
+
+  @override
+  String get penaltyWrongWay =>
+      'Wrong-way: up to 3 months imprisonment or 50,000 yen fine';
+
+  @override
+  String get penaltyNoBicycle => 'No-entry violation: up to 50,000 yen fine';
+
+  @override
+  String get penaltyStopSign => 'Running stop sign: subject to blue ticket';
+
+  @override
+  String get penaltyEnforcement => 'Traffic enforcement area';
+
+  @override
   String get logTitle => 'Ride History';
 
   @override

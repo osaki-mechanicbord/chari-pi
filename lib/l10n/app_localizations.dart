@@ -329,6 +329,96 @@ abstract class L10n {
   /// **'一方通行'**
   String get nodeOneway;
 
+  /// No description provided for @nodeWrongWay.
+  ///
+  /// In ja, this message translates to:
+  /// **'逆走警告'**
+  String get nodeWrongWay;
+
+  /// No description provided for @nodePedestrianRoad.
+  ///
+  /// In ja, this message translates to:
+  /// **'歩行者専用道路'**
+  String get nodePedestrianRoad;
+
+  /// No description provided for @nodeFootway.
+  ///
+  /// In ja, this message translates to:
+  /// **'歩道'**
+  String get nodeFootway;
+
+  /// No description provided for @nodeFootwayNoBicycle.
+  ///
+  /// In ja, this message translates to:
+  /// **'自転車禁止歩道'**
+  String get nodeFootwayNoBicycle;
+
+  /// No description provided for @nodeCycleway.
+  ///
+  /// In ja, this message translates to:
+  /// **'自転車専用道路'**
+  String get nodeCycleway;
+
+  /// No description provided for @nodeCrossing.
+  ///
+  /// In ja, this message translates to:
+  /// **'横断歩道'**
+  String get nodeCrossing;
+
+  /// No description provided for @nodeNoBicycle.
+  ///
+  /// In ja, this message translates to:
+  /// **'自転車通行禁止'**
+  String get nodeNoBicycle;
+
+  /// No description provided for @nodeDismount.
+  ///
+  /// In ja, this message translates to:
+  /// **'押し歩き区間'**
+  String get nodeDismount;
+
+  /// No description provided for @nodeSpeedLimit.
+  ///
+  /// In ja, this message translates to:
+  /// **'速度制限'**
+  String get nodeSpeedLimit;
+
+  /// No description provided for @nodeAccidentZone.
+  ///
+  /// In ja, this message translates to:
+  /// **'事故多発地点'**
+  String get nodeAccidentZone;
+
+  /// No description provided for @nodeEnforcementZone.
+  ///
+  /// In ja, this message translates to:
+  /// **'取り締まりエリア'**
+  String get nodeEnforcementZone;
+
+  /// No description provided for @penaltyWrongWay.
+  ///
+  /// In ja, this message translates to:
+  /// **'逆走は3ヶ月以下の懲役又は5万円以下の罰金'**
+  String get penaltyWrongWay;
+
+  /// No description provided for @penaltyNoBicycle.
+  ///
+  /// In ja, this message translates to:
+  /// **'通行禁止違反: 5万円以下の罰金'**
+  String get penaltyNoBicycle;
+
+  /// No description provided for @penaltyStopSign.
+  ///
+  /// In ja, this message translates to:
+  /// **'一時停止無視: 青切符の対象'**
+  String get penaltyStopSign;
+
+  /// No description provided for @penaltyEnforcement.
+  ///
+  /// In ja, this message translates to:
+  /// **'取り締まり重点エリアです'**
+  String get penaltyEnforcement;
+
   /// No description provided for @logTitle.
   ///
   /// In ja, this message translates to:
