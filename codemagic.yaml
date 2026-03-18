@@ -1,9 +1,4 @@
 workflows:
-  # ============================================
-  # iOS Release + Android Debug Build
-  # iOS: App Store signing -> TestFlight
-  # Android: Debug build (no signing required)
-  # ============================================
   default-workflow:
     name: Default Workflow
     max_build_duration: 30
@@ -24,11 +19,27 @@ workflows:
       - name: Set up iOS code signing
         script: |
           keychain initialize
+          
+          # Fetch signing files and capture output
           app-store-connect fetch-signing-files "com.cycleguard.safety" \
             --type IOS_APP_STORE \
             --create
+          
           keychain add-certificates
+          
+          # Debug: list profiles
+          echo "=== Provisioning Profiles ==="
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "No profiles directory"
+          
+          # Debug: list certificates
+          echo "=== Certificates ==="
+          security find-identity -v -p codesigning || echo "No certificates"
+          
           xcode-project use-profiles
+          
+          # Debug: verify project settings after use-profiles
+          echo "=== Xcode project signing after use-profiles ==="
+          grep -A2 "CODE_SIGN_STYLE\|PROVISIONING_PROFILE\|DEVELOPMENT_TEAM" ios/Runner.xcodeproj/project.pbxproj | head -30
       - name: Build Android APK (Debug)
         script: |
           flutter build apk --debug
