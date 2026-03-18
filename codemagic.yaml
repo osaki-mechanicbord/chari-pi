@@ -32,12 +32,14 @@ workflows:
       - name: Build Android APK (Debug)
         script: |
           flutter build apk --debug
-      - name: Build iOS IPA (Release)
+      - name: Flutter build iOS (no codesign)
         script: |
-          flutter build ipa --release \
-            --build-name=1.0.0 \
-            --build-number=$PROJECT_BUILD_NUMBER \
-            --export-options-plist=/Users/builder/export_options.plist
+          flutter build ios --release --no-codesign
+      - name: Build iOS IPA with Codemagic
+        script: |
+          xcode-project build-ipa \
+            --workspace ios/Runner.xcworkspace \
+            --scheme Runner
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
       - build/ios/ipa/*.ipa
