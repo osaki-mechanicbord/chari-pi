@@ -1,117 +1,107 @@
 workflows:
-  default-workflow:
-    name: Default Workflow
+
+  # ============================================================
+  #  iOS - Build & Publish to App Store Connect / TestFlight
+  # ============================================================
+  ios-release:
+    name: iOS Release
     max_build_duration: 30
     instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Codemagic
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.cycleguard.safety
+      vars:
+        APP_STORE_APPLE_ID: 0000000000  # TODO: App Store Connect の Apple ID に置き換え
       flutter: stable
       xcode: latest
       cocoapods: default
-    integrations:
-      app_store_connect: Codemagic
     scripts:
+      - name: Set up local.properties
+        script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
       - name: Get Flutter packages
-        script: |
-          flutter pub get
+        script: flutter packages pub get
       - name: Install CocoaPods
         script: |
-          cd ios && pod install
-      - name: Set up iOS code signing
-        script: |
-          keychain initialize
-          
-          app-store-connect fetch-signing-files "com.cycleguard.safety" \
-            --type IOS_APP_STORE \
-            --create
-          
-          keychain add-certificates
-          
-          # Get the provisioning profile UUID
-          PROFILE_PATH=$(ls ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision 2>/dev/null | head -1)
-          echo "Profile path: $PROFILE_PATH"
-          
-          if [ -n "$PROFILE_PATH" ]; then
-            PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(/usr/bin/security cms -D -i "$PROFILE_PATH"))
-            TEAM_ID=$(/usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" /dev/stdin <<< $(/usr/bin/security cms -D -i "$PROFILE_PATH"))
-            echo "Profile UUID: $PROFILE_UUID"
-            echo "Team ID: $TEAM_ID"
-            
-            # Export for later use
-            echo "PROFILE_UUID=$PROFILE_UUID" >> $CM_ENV
-            echo "TEAM_ID=$TEAM_ID" >> $CM_ENV
-          else
-            echo "ERROR: No provisioning profile found!"
-            ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "Directory not found"
-            exit 1
-          fi
-          
-          # Get signing identity
-          SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution\|iPhone Distribution" | head -1 | sed 's/.*"\(.*\)".*/\1/')
-          echo "Signing Identity: $SIGNING_IDENTITY"
-          echo "SIGNING_IDENTITY=$SIGNING_IDENTITY" >> $CM_ENV
-      - name: Build Android APK (Debug)
-        script: |
-          flutter build apk --debug
-      - name: Flutter build iOS (no codesign)
-        script: |
-          flutter build ios --release --no-codesign
-      - name: Create ExportOptions.plist
-        script: |
-          cat > /tmp/ExportOptions.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store</string>
-              <key>teamID</key>
-              <string>$TEAM_ID</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>provisioningProfiles</key>
-              <dict>
-                  <key>com.cycleguard.safety</key>
-                  <string>$PROFILE_UUID</string>
-              </dict>
-              <key>signingCertificate</key>
-              <string>$SIGNING_IDENTITY</string>
-              <key>uploadBitcode</key>
-              <false/>
-              <key>uploadSymbols</key>
-              <true/>
-          </dict>
-          </plist>
-          EOF
-          echo "=== ExportOptions.plist ==="
-          cat /tmp/ExportOptions.plist
-      - name: Archive and Export IPA
-        script: |
-          # Archive
-          xcodebuild archive \
-            -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -archivePath build/ios/Runner.xcarchive \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
-            CODE_SIGN_IDENTITY="$SIGNING_IDENTITY" \
-            COMPILER_INDEX_STORE_ENABLE=NO
-          
-          # Export IPA
-          xcodebuild -exportArchive \
-            -archivePath build/ios/Runner.xcarchive \
-            -exportOptionsPlist /tmp/ExportOptions.plist \
-            -exportPath build/ios/ipa
-          
-          echo "=== IPA files ==="
-          ls -la build/ios/ipa/
+          cd ios
+          pod install
+      - name: Flutter analyze
+        script: flutter analyze --no-fatal-warnings
+      - name: Build iOS
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
     publishing:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-        submit_to_app_store: false
+        expire_build_submitted_for_review: true
+      email:
+        recipients:
+          - osaki-mechanicbord@users.noreply.github.com
+        notify:
+          success: true
+          failure: true
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+      tag_patterns:
+        - pattern: "v*"
+          include: true
+
+  # ============================================================
+  #  Android - Build & Publish to Google Play
+  # ============================================================
+  android-release:
+    name: Android Release
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - cycle_guard_keystore  # Codemagic にアップロードした keystore 名
+      groups:
+        - google_play_credentials  # Google Play API キーのグループ名
+      vars:
+        PACKAGE_NAME: com.cycleguard.safety
+      flutter: stable
+      java: 17
+    scripts:
+      - name: Set up local.properties
+        script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Get Flutter packages
+        script: flutter packages pub get
+      - name: Flutter analyze
+        script: flutter analyze --no-fatal-warnings
+      - name: Build AAB
+        script: flutter build appbundle --release
+    artifacts:
+      - build/app/outputs/bundle/**/*.aab
+      - build/app/outputs/flutter-apk/**/*.apk
+      - flutter_drive.log
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal  # internal -> alpha -> beta -> production
+        submit_as_draft: true
+      email:
+        recipients:
+          - osaki-mechanicbord@users.noreply.github.com
+        notify:
+          success: true
+          failure: true
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+      tag_patterns:
+        - pattern: "v*"
+          include: true
