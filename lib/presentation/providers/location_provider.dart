@@ -415,7 +415,11 @@ class LocationProvider extends ChangeNotifier {
     _isDemoMode = demoMode;
     _kalmanFilter.reset();
 
-    WakelockPlus.enable();
+    try {
+      WakelockPlus.enable();
+    } catch (e) {
+      if (kDebugMode) debugPrint('WakelockPlus.enable() failed: $e');
+    }
 
     if (demoMode) {
       _startDemoSimulation();
@@ -447,7 +451,11 @@ class LocationProvider extends ChangeNotifier {
     _warningNodes = [];
     _warnedNodeStages.clear();
 
-    WakelockPlus.disable();
+    try {
+      WakelockPlus.disable();
+    } catch (e) {
+      if (kDebugMode) debugPrint('WakelockPlus.disable() failed: $e');
+    }
     _ttsService.stop();
 
     notifyListeners();
@@ -558,7 +566,7 @@ class LocationProvider extends ChangeNotifier {
   void dispose() {
     _demoTimer?.cancel();
     _gpsSubscription?.cancel();
-    WakelockPlus.disable();
+    try { WakelockPlus.disable(); } catch (_) {}
     _ttsService.dispose();
     super.dispose();
   }
