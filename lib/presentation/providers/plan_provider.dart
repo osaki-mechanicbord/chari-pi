@@ -144,12 +144,9 @@ class PlanProvider extends ChangeNotifier {
     _currentPlan = plan;
     final box = await Hive.openBox('plan_settings');
     await box.put('plan_type', plan.index);
-    if (plan == PlanType.family && _familyRole == FamilyRole.none) {
+    if (plan == PlanType.family && _familyRole != FamilyRole.parent) {
       await setFamilyRole(FamilyRole.parent);
-    } else if (plan == PlanType.family && _familyRole == FamilyRole.freeWatcher) {
-      // Upgrade from free watcher to family parent
-      await setFamilyRole(FamilyRole.parent);
-    } else if (plan == PlanType.business && _familyRole == FamilyRole.none) {
+    } else if (plan == PlanType.business && _familyRole != FamilyRole.admin) {
       await setFamilyRole(FamilyRole.admin);
     }
     notifyListeners();
