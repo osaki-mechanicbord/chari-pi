@@ -4,6 +4,7 @@ import 'package:cycle_guard/l10n/app_localizations.dart';
 import '../../core/constants/colors.dart';
 import '../providers/settings_provider.dart';
 import '../providers/plan_provider.dart';
+import '../providers/content_provider.dart';
 import 'plan_upgrade_screen.dart';
 import 'family_setup_screen.dart';
 import 'legal/privacy_policy_screen.dart';
@@ -248,7 +249,11 @@ class SettingsScreen extends StatelessWidget {
             children: SettingsProvider.supportedLocales.map((locale) {
               final isSelected = settings.locale.languageCode == locale.languageCode;
               return GestureDetector(
-                onTap: () => settings.setLocale(locale),
+                onTap: () {
+                  settings.setLocale(locale);
+                  // ContentProvider の学習・クイズデータも言語切替
+                  context.read<ContentProvider>().updateLocale(locale.languageCode);
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
