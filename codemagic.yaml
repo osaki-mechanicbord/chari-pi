@@ -27,6 +27,8 @@ workflows:
         script: |
           cd ios
           pod install
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
       - name: Flutter analyze
         script: flutter analyze --no-fatal-warnings
       - name: Build iOS
@@ -65,7 +67,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       android_signing:
-        - cycle_guard_keystore  # Codemagic にアップロードした keystore 名
+        - cycle_guard_keystore
       vars:
         PACKAGE_NAME: com.cycleguard.safety
       flutter: stable
@@ -75,6 +77,12 @@ workflows:
         script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
       - name: Get Flutter packages
         script: flutter packages pub get
+      - name: Set up Android keystore
+        script: |
+          # Codemagic automatically sets CM_KEYSTORE_PATH, CM_KEY_ALIAS, etc.
+          # when android_signing is configured. The build.gradle.kts reads these
+          # environment variables as fallback when key.properties is not present.
+          echo "Android signing configured via Codemagic environment variables"
       - name: Flutter analyze
         script: flutter analyze --no-fatal-warnings
       - name: Build AAB
