@@ -57,7 +57,7 @@ workflows:
           include: true
 
   # ============================================================
-  #  Android - Build & Publish to Google Play
+  #  Android - Build & Download AAB (手動で Google Play にアップロード)
   # ============================================================
   android-release:
     name: Android Release
@@ -66,8 +66,6 @@ workflows:
     environment:
       android_signing:
         - cycle_guard_keystore  # Codemagic にアップロードした keystore 名
-      groups:
-        - google_play_credentials  # Google Play API キーのグループ名
       vars:
         PACKAGE_NAME: com.cycleguard.safety
       flutter: stable
@@ -86,10 +84,6 @@ workflows:
       - build/app/outputs/flutter-apk/**/*.apk
       - flutter_drive.log
     publishing:
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal  # internal -> alpha -> beta -> production
-        submit_as_draft: true
       email:
         recipients:
           - osaki-mechanicbord@users.noreply.github.com
