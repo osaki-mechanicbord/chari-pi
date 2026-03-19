@@ -46,6 +46,10 @@
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDGU0BI5vCYxgvtjSfkPkiEIvc69CG_8-8"/>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
@@ -62,6 +66,7 @@
         </intent>
     </queries>
 </manifest>
+
 
 
 

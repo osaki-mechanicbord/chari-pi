@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1773366820",
-    "project_id": "unknown-project",
-    "storage_bucket": "unknown-project.appspot.com"
+    "project_number": "799273722522",
+    "project_id": "charippi-7c315",
+    "storage_bucket": "charippi-7c315.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1773366820:android:nzuaga9v8p9o",
+        "mobilesdk_app_id": "1:799273722522:android:1e5a92e3558235b1107523",
         "android_client_info": {
           "package_name": "com.cycleguard.safety"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "placeholder-api-key-nzuaga9v8p9o"
+          "current_key": "AIzaSyB1LMOCtn18HAaq7UOKoGFG6C1isUZhCOE"
         }
       ],
       "services": {

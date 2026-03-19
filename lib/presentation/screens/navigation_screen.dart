@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart' as ll;
 import 'package:provider/provider.dart';
 import 'package:cycle_guard/l10n/app_localizations.dart';
 import '../../core/constants/colors.dart';
@@ -24,7 +24,7 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> with WidgetsBindingObserver {
-  final MapController _mapController = MapController();
+  GoogleMapController? _mapController;
   bool _followUser = true;
   bool _gpsInitialized = false;
   StreamSubscription? _gpsSubscription;
@@ -78,7 +78,20 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
     WidgetsBinding.instance.removeObserver(this);
     _gpsSubscription?.cancel();
     _durationTimer?.cancel();
+    _mapController?.dispose();
     super.dispose();
+  }
+
+  /// Convert latlong2.LatLng to google_maps_flutter.LatLng
+  LatLng _toGoogleLatLng(ll.LatLng pos) {
+    return LatLng(pos.latitude, pos.longitude);
+  }
+
+  /// Move camera to position
+  void _animateToPosition(LatLng pos) {
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLng(pos),
+    );
   }
 
   @override
@@ -98,70 +111,94 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
 
         if (_followUser && locationProvider.rideStatus == RideStatus.tracking) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            try {
-              _mapController.move(currentPos, 17.0);
-            } catch (_) {}
+            _animateToPosition(currentPos);
           });
+        }
+
+        // Build markers
+        final markers = _buildOSMMarkers(locationProvider.nearbyNodes);
+        // Add user position marker
+        markers.add(
+          Marker(
+            markerId: const MarkerId('user_position'),
+            position: currentPos,
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+            anchor: const Offset(0.5, 0.5),
+            zIndexInt: 100,
+            rotation: locationProvider.heading,
+          ),
+        );
+
+        // Build polylines
+        final polylines = <Polyline>{};
+
+        // Route trail
+        if (locationProvider.routePoints.length >= 2) {
+          polylines.add(
+            Polyline(
+              polylineId: const PolylineId('route_trail'),
+              points: locationProvider.routePoints
+                  .map((p) => _toGoogleLatLng(p))
+                  .toList(),
+              color: AppColors.accentCyan,
+              width: 4,
+            ),
+          );
+        }
+
+        // Cycleway overlays
+        polylines.addAll(_buildCyclewayPolylines(locationProvider.nearbyNodes));
+
+        // Build circles
+        final circles = <Circle>{};
+        if (locationProvider.rideStatus == RideStatus.tracking) {
+          circles.add(
+            Circle(
+              circleId: const CircleId('accuracy'),
+              center: currentPos,
+              radius: locationProvider.accuracy.clamp(3, 100),
+              fillColor: AppColors.accentCyan.withValues(alpha: 0.12),
+              strokeColor: AppColors.accentCyan.withValues(alpha: 0.4),
+              strokeWidth: 1,
+            ),
+          );
         }
 
         return Stack(
           children: [
-            FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: currentPos,
-                initialZoom: 17.0,
-                minZoom: 13.0,
-                maxZoom: 19.0,
-                onPositionChanged: (pos, hasGesture) {
-                  if (hasGesture) setState(() => _followUser = false);
-                },
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: currentPos,
+                zoom: 17.0,
               ),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.cycleguard.safety',
-                ),
-                // Cycleway polylines (green overlay)
-                _buildCyclewayOverlay(locationProvider.nearbyNodes),
-                if (locationProvider.routePoints.length >= 2)
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: locationProvider.routePoints,
-                        color: AppColors.accentCyan,
-                        strokeWidth: 4.0,
-                      ),
-                    ],
-                  ),
-                if (locationProvider.rideStatus == RideStatus.tracking)
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: currentPos,
-                        radius: locationProvider.accuracy.clamp(3, 100),
-                        color: AppColors.accentCyan.withValues(alpha: 0.12),
-                        borderColor: AppColors.accentCyan.withValues(alpha: 0.4),
-                        borderStrokeWidth: 1.5,
-                        useRadiusInMeter: true,
-                      ),
-                    ],
-                  ),
-                MarkerLayer(
-                  markers: _buildOSMMarkers(locationProvider.nearbyNodes),
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: currentPos,
-                      width: 50,
-                      height: 50,
-                      child: _buildUserMarker(locationProvider.heading),
-                    ),
-                  ],
-                ),
-              ],
+              onMapCreated: (controller) {
+                _mapController = controller;
+              },
+              onCameraMoveStarted: () {
+                // User gesture detected: disable auto-follow
+                if (_followUser) {
+                  setState(() => _followUser = false);
+                }
+              },
+              onCameraMove: (position) {
+                // Will detect manual gestures in onCameraIdle
+              },
+              onCameraIdle: () {
+                // No-op: gesture detection handled via _followUser flag
+              },
+              myLocationEnabled: false,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              compassEnabled: true,
+              minMaxZoomPreference: const MinMaxZoomPreference(13.0, 19.0),
+              markers: markers,
+              polylines: polylines,
+              circles: circles,
+
             ),
+
+
 
             if (locationProvider.warningNodes.isNotEmpty)
               Positioned(
@@ -210,7 +247,7 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
                   heroTag: 'recenter',
                   onPressed: () {
                     setState(() => _followUser = true);
-                    _mapController.move(currentPos, 17.0);
+                    _animateToPosition(currentPos);
                   },
                   backgroundColor: AppColors.bgCard.withValues(alpha: 0.9),
                   child: const Icon(Icons.my_location, color: AppColors.accentCyan),
@@ -238,104 +275,77 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
     );
   }
 
-  Widget _buildUserMarker(double heading) {
-    return Transform.rotate(
-      angle: heading * 3.14159265 / 180,
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: const LinearGradient(
-            colors: [AppColors.primaryLight, AppColors.accentCyan],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.accentCyan.withValues(alpha: 0.5),
-              blurRadius: 12, spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: const Icon(Icons.directions_bike, color: Colors.white, size: 30),
-      ),
-    );
-  }
-
-  /// Build cycleway polyline overlay for bicycle lanes
-  Widget _buildCyclewayOverlay(List<OSMNode> nodes) {
+  /// Build cycleway polylines for bicycle lanes
+  Set<Polyline> _buildCyclewayPolylines(List<OSMNode> nodes) {
     final cycleways = nodes.where((n) =>
       n.type == OSMNodeType.cycleway &&
       n.wayNodes != null &&
       n.wayNodes!.length >= 2
     ).toList();
 
-    if (cycleways.isEmpty) return const SizedBox.shrink();
-
-    return PolylineLayer(
-      polylines: cycleways.map((cw) => Polyline(
-        points: cw.wayNodes!,
+    return cycleways.asMap().entries.map((entry) {
+      return Polyline(
+        polylineId: PolylineId('cycleway_${entry.key}'),
+        points: entry.value.wayNodes!.map((p) => _toGoogleLatLng(p)).toList(),
         color: AppColors.accentGreen.withValues(alpha: 0.6),
-        strokeWidth: 5.0,
-        pattern: const StrokePattern.dotted(),
-      )).toList(),
-    );
+        width: 5,
+        patterns: [PatternItem.dot, PatternItem.gap(10)],
+      );
+    }).toSet();
   }
 
   /// Build map markers for all OSM node types
-  List<Marker> _buildOSMMarkers(List<OSMNode> nodes) {
-    return nodes.where((n) => (n.distanceFromUser ?? double.infinity) <= 300).map((node) {
+  Set<Marker> _buildOSMMarkers(List<OSMNode> nodes) {
+    return nodes
+        .where((n) => (n.distanceFromUser ?? double.infinity) <= 300)
+        .map((node) {
       final config = _getMarkerConfig(node);
-      final size = node.penaltyRisk >= 4 ? 40.0 : 34.0;
 
       return Marker(
-        point: node.position,
-        width: size, height: size,
-        child: Container(
-          decoration: BoxDecoration(
-            color: config.color,
-            shape: BoxShape.circle,
-            border: node.isWrongWay
-              ? Border.all(color: Colors.white, width: 2)
-              : null,
-            boxShadow: [BoxShadow(
-              color: config.color.withValues(alpha: 0.5),
-              blurRadius: node.penaltyRisk >= 4 ? 12 : 8,
-            )],
-          ),
-          child: Icon(config.icon, color: Colors.white, size: size * 0.55),
+        markerId: MarkerId('osm_${node.id}'),
+        position: _toGoogleLatLng(node.position),
+        icon: BitmapDescriptor.defaultMarkerWithHue(config.hue),
+        zIndexInt: node.penaltyRisk,
+        infoWindow: InfoWindow(
+          title: node.typeLabel,
+          snippet: node.distanceFromUser != null
+              ? '${node.distanceFromUser!.round()}m'
+              : '',
         ),
       );
-    }).toList();
+    }).toSet();
   }
 
   _MarkerConfig _getMarkerConfig(OSMNode node) {
     switch (node.type) {
       case OSMNodeType.stopSign:
-        return _MarkerConfig(Icons.front_hand, AppColors.danger);
+        return _MarkerConfig(Icons.front_hand, AppColors.danger, BitmapDescriptor.hueRed);
       case OSMNodeType.trafficSignal:
-        return _MarkerConfig(Icons.traffic, AppColors.warning);
+        return _MarkerConfig(Icons.traffic, AppColors.warning, BitmapDescriptor.hueOrange);
       case OSMNodeType.oneway:
         return node.isWrongWay
-          ? _MarkerConfig(Icons.warning_amber, AppColors.danger)
-          : _MarkerConfig(Icons.arrow_forward, AppColors.info);
+          ? _MarkerConfig(Icons.warning_amber, AppColors.danger, BitmapDescriptor.hueRed)
+          : _MarkerConfig(Icons.arrow_forward, AppColors.info, BitmapDescriptor.hueAzure);
       case OSMNodeType.pedestrianRoad:
-        return _MarkerConfig(Icons.directions_walk, const Color(0xFFE91E63));
+        return _MarkerConfig(Icons.directions_walk, const Color(0xFFE91E63), BitmapDescriptor.hueRose);
       case OSMNodeType.footway:
-        return _MarkerConfig(Icons.directions_walk, const Color(0xFFFF9800));
+        return _MarkerConfig(Icons.directions_walk, const Color(0xFFFF9800), BitmapDescriptor.hueOrange);
       case OSMNodeType.footwayNoBicycle:
-        return _MarkerConfig(Icons.no_transfer, AppColors.danger);
+        return _MarkerConfig(Icons.no_transfer, AppColors.danger, BitmapDescriptor.hueRed);
       case OSMNodeType.cycleway:
-        return _MarkerConfig(Icons.pedal_bike, AppColors.accentGreen);
+        return _MarkerConfig(Icons.pedal_bike, AppColors.accentGreen, BitmapDescriptor.hueGreen);
       case OSMNodeType.crossing:
-        return _MarkerConfig(Icons.transfer_within_a_station, const Color(0xFF2196F3));
+        return _MarkerConfig(Icons.transfer_within_a_station, const Color(0xFF2196F3), BitmapDescriptor.hueBlue);
       case OSMNodeType.noBicycle:
-        return _MarkerConfig(Icons.block, AppColors.danger);
+        return _MarkerConfig(Icons.block, AppColors.danger, BitmapDescriptor.hueRed);
       case OSMNodeType.dismount:
-        return _MarkerConfig(Icons.directions_walk, const Color(0xFF9C27B0));
+        return _MarkerConfig(Icons.directions_walk, const Color(0xFF9C27B0), BitmapDescriptor.hueViolet);
       case OSMNodeType.speedLimit:
-        return _MarkerConfig(Icons.speed, const Color(0xFF607D8B));
+        return _MarkerConfig(Icons.speed, const Color(0xFF607D8B), BitmapDescriptor.hueCyan);
       case OSMNodeType.accidentZone:
-        return _MarkerConfig(Icons.car_crash, const Color(0xFFB71C1C));
+        return _MarkerConfig(Icons.car_crash, const Color(0xFFB71C1C), BitmapDescriptor.hueRed);
       case OSMNodeType.enforcementZone:
-        return _MarkerConfig(Icons.local_police, const Color(0xFF1A237E));
+        return _MarkerConfig(Icons.local_police, const Color(0xFF1A237E), BitmapDescriptor.hueBlue);
     }
   }
 
@@ -466,9 +476,10 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
   }
 }
 
-/// Simple config holder for marker icon and color
+/// Simple config holder for marker icon, color, and hue
 class _MarkerConfig {
   final IconData icon;
   final Color color;
-  _MarkerConfig(this.icon, this.color);
+  final double hue;
+  _MarkerConfig(this.icon, this.color, this.hue);
 }
