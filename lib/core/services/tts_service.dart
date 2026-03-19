@@ -1,6 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../../data/models/osm_node.dart';
+import 'tts_messages_ko.dart';
+import 'tts_messages_zh.dart';
+import 'tts_messages_vi.dart';
+import 'tts_messages_th.dart';
+import 'tts_messages_fil.dart';
 
 /// Text-to-Speech service for voice alerts
 /// 段階的・詳細な音声ガイダンスで「見ないで安全」を実現
@@ -107,10 +112,23 @@ class TtsService {
   String getDetailedMessage(OSMNode node, int stage, String localeCode, {double? userSpeed}) {
     final dist = node.distanceFromUser?.round() ?? 0;
 
-    if (localeCode == 'en') {
-      return _getEnglishMessage(node, stage, dist, userSpeed: userSpeed);
+    switch (localeCode) {
+      case 'en':
+        return _getEnglishMessage(node, stage, dist, userSpeed: userSpeed);
+      case 'ko':
+        return getTtsMessageKo(node, stage, dist, userSpeed: userSpeed);
+      case 'zh':
+        return getTtsMessageZh(node, stage, dist, userSpeed: userSpeed);
+      case 'vi':
+        return getTtsMessageVi(node, stage, dist, userSpeed: userSpeed);
+      case 'th':
+        return getTtsMessageTh(node, stage, dist, userSpeed: userSpeed);
+      case 'fil':
+        return getTtsMessageFil(node, stage, dist, userSpeed: userSpeed);
+      case 'ja':
+      default:
+        return _getJapaneseMessage(node, stage, dist, userSpeed: userSpeed);
     }
-    return _getJapaneseMessage(node, stage, dist, userSpeed: userSpeed);
   }
 
   String _getJapaneseMessage(OSMNode node, int stage, int dist, {double? userSpeed}) {

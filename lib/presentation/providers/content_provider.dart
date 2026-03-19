@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import '../../data/models/learn_data.dart';
 import '../../data/models/quiz_data.dart';
 import '../../core/services/content_api_service.dart';
+import '../../data/localized/categories_data.dart';
+import '../../data/localized/law_updates_data.dart';
 
 /// コンテンツプロバイダー
 /// ローカルデータをベースに、APIからの追加データもマージ
@@ -63,57 +65,14 @@ class ContentProvider extends ChangeNotifier {
     _rules = localRules;
     _quizzes = localQuizzes;
 
-    // カテゴリ情報を構築
-    _categories = _buildCategoriesFromLocalData();
+    // カテゴリ情報を構築（多言語対応）
+    _categories = buildLocalizedCategories(_localeCode);
 
-    // 法改正情報（ローカル）
-    _lawUpdates = _buildLocalLawUpdates();
+    // 法改正情報（多言語対応）
+    _lawUpdates = buildLocalizedLawUpdates(_localeCode);
   }
 
-  /// ローカルデータからカテゴリ情報を構築
-  Map<String, dynamic> _buildCategoriesFromLocalData() {
-    return {
-      'basic': {'name': '基本ルール', 'icon': 'electric_bike', 'description': '自転車の基本的な交通ルール'},
-      'intersection': {'name': '交差点', 'icon': 'traffic', 'description': '交差点での走行ルール'},
-      'road': {'name': '道路', 'icon': 'compare_arrows', 'description': '道路の走行に関するルール'},
-      'equipment': {'name': '装備', 'icon': 'build', 'description': '自転車の装備に関するルール'},
-      'prohibition': {'name': '禁止事項', 'icon': 'pan_tool', 'description': '禁止されている行為'},
-      'safety': {'name': '安全運転', 'icon': 'security', 'description': '安全に運転するためのコツ'},
-      'insurance': {'name': '保険', 'icon': 'security', 'description': '自転車保険について'},
-      'new_law': {'name': '新法令', 'icon': 'receipt_long', 'description': '最新の法改正情報'},
-      'registration': {'name': '防犯登録', 'icon': 'lock', 'description': '防犯登録について'},
-    };
-  }
 
-  /// ローカルの法改正情報
-  List<Map<String, dynamic>> _buildLocalLawUpdates() {
-    return [
-      {
-        'title': '自転車の「青切符」制度が開始',
-        'summary': '2024年11月1日から自転車にも交通反則通告制度（青切符）が導入。16歳以上が対象で、信号無視6,000円、一時不停止5,000円等の反則金。',
-        'date': '2024-11-01',
-        'category': 'new_law',
-      },
-      {
-        'title': 'ながらスマホの罰則強化',
-        'summary': '自転車のながらスマホに6ヶ月以下の懲役又は10万円以下の罰金。交通危険を生じさせた場合は1年以下の懲役又は30万円以下の罰金。',
-        'date': '2024-11-01',
-        'category': 'new_law',
-      },
-      {
-        'title': '酒気帯び運転の罰則新設',
-        'summary': '自転車の酒気帯び運転に3年以下の懲役又は50万円以下の罰金の罰則が新設。従来の酒酔い運転に加え、酒気帯びも処罰対象に。',
-        'date': '2024-11-01',
-        'category': 'new_law',
-      },
-      {
-        'title': '全年齢ヘルメット着用努力義務化',
-        'summary': '2023年4月1日から全ての自転車利用者にヘルメット着用が努力義務化。罰則はないが、頭部致命傷リスクの大幅な軽減効果あり。',
-        'date': '2023-04-01',
-        'category': 'equipment',
-      },
-    ];
-  }
 
   /// キャッシュからデータ読み込み（APIから取得した追加データ）
   Future<void> _loadFromCache() async {
