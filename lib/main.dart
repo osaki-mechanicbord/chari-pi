@@ -45,7 +45,7 @@ void main() async {
   await locationProvider.initialize();
 
   final contentProvider = ContentProvider();
-  contentProvider.initialize();
+  contentProvider.initialize(localeCode: settingsProvider.locale.languageCode);
 
   final planProvider = PlanProvider();
   await planProvider.loadPlan();

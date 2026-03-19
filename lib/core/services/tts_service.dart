@@ -19,6 +19,9 @@ class TtsService {
     'en': 'en-US',
     'ko': 'ko-KR',
     'zh': 'zh-CN',
+    'vi': 'vi-VN',
+    'th': 'th-TH',
+    'fil': 'fil-PH',
   };
 
   Future<void> initialize() async {
@@ -121,7 +124,7 @@ class TtsService {
         }
       case OSMNodeType.trafficSignal:
         switch (stage) {
-          case 1: return '${dist}メートル先に信号機があります';
+          case 1: return '$distメートル先に信号機があります';
           case 2: return '信号機に近づいています。信号を確認してください';
           case 3: return '信号機です。信号に従ってください';
           default: return '';
@@ -136,7 +139,7 @@ class TtsService {
           }
         }
         switch (stage) {
-          case 1: return '${dist}メートル先に一方通行があります';
+          case 1: return '$distメートル先に一方通行があります';
           case 2: return '一方通行に近づいています。方向を確認してください';
           case 3: return '一方通行です。通行方向に注意してください';
           default: return '';
@@ -169,7 +172,7 @@ class TtsService {
         }
       case OSMNodeType.crossing:
         switch (stage) {
-          case 1: return '${dist}メートル先に横断歩道があります';
+          case 1: return '$distメートル先に横断歩道があります';
           case 2: return '横断歩道に近づいています。歩行者に注意してください';
           case 3: return '横断歩道です。歩行者がいれば一時停止してください';
           default: return '';

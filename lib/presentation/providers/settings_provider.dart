@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +21,9 @@ class SettingsProvider extends ChangeNotifier {
     Locale('en'),
     Locale('ko'),
     Locale('zh'),
+    Locale('vi'),
+    Locale('th'),
+    Locale('fil'),
   ];
 
   static String localeDisplayName(Locale locale) {
@@ -34,6 +36,12 @@ class SettingsProvider extends ChangeNotifier {
         return '한국어';
       case 'zh':
         return '中文';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'th':
+        return 'ภาษาไทย';
+      case 'fil':
+        return 'Filipino';
       default:
         return locale.languageCode;
     }

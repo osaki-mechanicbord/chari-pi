@@ -1,0 +1,235 @@
+{
+  "@@locale": "fil",
+
+  "appName": "CHARI-PI",
+  "appTagline": "Ang Iyong Cycling Safety Navigator",
+
+  "navMap": "Mapa",
+  "navLearn": "Matuto",
+  "navQuiz": "Pagsusulit",
+  "navLaw": "Batas",
+  "navLog": "Kasaysayan",
+  "navSettings": "Settings",
+
+  "splashSubtitle": "Cycling Safety Navigator",
+  "loading": "Naglo-load...",
+
+  "termsTitle": "Mga Tuntunin ng Paggamit",
+  "agreeAndContinue": "Sumang-ayon at Magpatuloy",
+
+  "startTitle": "Simulan ang pagsakay",
+  "startButton": "Simulan",
+  "locationPermissionRequired": "Kailangan ang location permission",
+  "featureSafety": "Kaligtasan",
+  "featureSafetyDesc": "Real-time na alerto",
+  "featureMap": "Mapa",
+  "featureMapDesc": "OSM powered",
+  "featureLearn": "Matuto",
+  "featureLearnDesc": "Mga batas trapiko",
+
+  "gpsSearching": "Naghahanap ng GPS...",
+  "gpsAccuracy": "GPS Accuracy",
+  "stopSignAhead": "Stop sign sa harap",
+  "trafficSignalAhead": "Traffic signal sa harap",
+  "onewayWarning": "Pag-iingat sa one-way",
+  "metersAhead": "m sa harap",
+  "demoMode": "Demo",
+  "demoModeButton": "Demo Mode",
+  "gpsUnavailableTitle": "Hindi nahanap ang GPS",
+  "gpsUnavailableMessage": "Hindi makuha ang GPS location.\n\n• Suriin ang browser location permissions\n• I-on ang location services\n\nMaaari mong subukan ang Demo Mode.",
+  "closeButton": "Isara",
+  "startWithDemo": "Simulan ang Demo",
+  "warningCountUnit": "",
+  "warningMessageFormat": "{type} sa {distance}m",
+  "@warningMessageFormat": {
+    "placeholders": {
+      "distance": {"type": "int"},
+      "type": {"type": "String"}
+    }
+  },
+  "nodeStopSign": "Stop sign",
+  "nodeTrafficSignal": "Traffic signal",
+  "nodeOneway": "One-way",
+  "nodeWrongWay": "Maling daan",
+  "nodePedestrianRoad": "Pedestrian zone",
+  "nodeFootway": "Sidewalk",
+  "nodeFootwayNoBicycle": "Bawal bisikleta sa sidewalk",
+  "nodeCycleway": "Bicycle lane",
+  "nodeCrossing": "Crosswalk",
+  "nodeNoBicycle": "Bawal bisikleta",
+  "nodeDismount": "Dismount zone",
+  "nodeSpeedLimit": "Speed limit",
+  "nodeAccidentZone": "Accident zone",
+  "nodeEnforcementZone": "Enforcement zone",
+  "penaltyWrongWay": "Maling daan: hanggang 3 buwang pagkakulong o 50,000 yen multa",
+  "penaltyNoBicycle": "Paglabag sa no-entry: hanggang 50,000 yen multa",
+  "penaltyStopSign": "Paglabag sa stop sign: blue ticket",
+  "penaltyEnforcement": "Traffic enforcement area",
+
+  "logTitle": "Kasaysayan ng Pagsakay",
+  "noHistory": "Walang kasaysayan",
+  "totalDistance": "Kabuuang Distansya",
+  "duration": "Tagal",
+  "warningsLabel": "Mga Babala",
+  "rideCount": "Mga Sakay",
+  "deleteHistory": "Burahin ang Kasaysayan",
+  "deleteHistoryConfirm": "Burahin lahat ng kasaysayan?",
+  "cancelButton": "Kanselahin",
+  "deleteButton": "Burahin",
+  "startNavPrompt": "Simulan ang navigation para i-record ang ride",
+
+  "learnTitle": "Mga Batas Trapiko",
+  "offlineLabel": "Offline",
+  "refreshTooltip": "I-refresh ang data",
+  "allCategories": "Lahat",
+  "sourceLabel": "Pinagmulan: National Police Agency / e-Gov",
+  "rulesCountFormat": "{count} na batas trapiko",
+  "@rulesCountFormat": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "loadingContent": "Naglo-load ng content...",
+  "retryButton": "Subukan muli",
+  "noMatchingRules": "Walang nahanap na batas",
+  "catBasic": "Pangunahing Batas",
+  "catIntersection": "Mga Intersection",
+  "catRoad": "Pagmamaneho sa Daan",
+  "catEquipment": "Kagamitan",
+  "catProhibition": "Ipinagbabawal",
+  "catSafety": "Kaligtasan",
+  "catInsurance": "Insurance",
+  "catNewLaw": "Bagong Batas",
+  "catRegistration": "Pagpaparehistro",
+
+  "quizTitle": "Quiz sa Batas Trapiko",
+  "quizCorrect": "Tama!",
+  "quizIncorrect": "Mali...",
+  "quizScore": "Iskor",
+  "quizNext": "Susunod na Tanong",
+  "quizFinish": "Tingnan ang Resulta",
+  "quizResult": "Resulta ng Quiz",
+  "quizRetry": "Subukan Muli",
+  "quizStart": "Simulan ang Quiz",
+  "quizTotal": "Kabuuan",
+  "quizEasy": "Madali",
+  "quizMedium": "Katamtaman",
+  "quizHard": "Mahirap",
+  "quizAllLevels": "Lahat ng Level",
+  "quizDifficulty": "Kahirapan",
+  "quizQuestionCount": "Mga Tanong",
+  "quizQuestionUnit": "tanong",
+  "quizNoQuestions": "Walang nahanap na quiz",
+  "quizQuestionProgress": "Tanong {current} / {total}",
+  "@quizQuestionProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizScoreResult": "{score} / {total} ang tama",
+  "@quizScoreResult": {
+    "placeholders": {
+      "score": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizGreatMessage": "Magaling! Mahusay ang kaalaman mo sa batas trapiko.",
+  "quizTryAgainMessage": "Subukan muli!\nRebyuhin ang mga batas trapiko.",
+  "quizSourceNote": "Pinagmulan: Road Traffic Act / National Police Agency Bicycle Portal\nAng content ay batay sa opisyal na pinagmulan. Suriin ang pinakabagong batas.",
+
+  "lawUpdatesTitle": "Mga Update sa Batas",
+  "lawUpdatesInfo": "Pinakabagong pagbabago sa batas ng bisikleta",
+  "lawNoUpdates": "Wala pang update",
+  "lawUpcoming": "Paparating",
+  "lawEnacted": "Ipinatupad na",
+  "lawEffectiveDate": "Epektibo: {date}",
+  "@lawEffectiveDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "lawCheckSource": "Suriin ang pinagmulan",
+
+  "settingsTitle": "Settings",
+  "planSection": "Plan",
+  "alertSection": "Alert Settings",
+  "displaySection": "Display",
+  "appInfoSection": "App Info",
+  "legalSection": "Legal",
+  "languageSection": "Wika",
+
+  "voiceAlert": "Voice Alert",
+  "voiceAlertDesc": "Audio alert para sa stop sign at signal",
+  "vibrationAlert": "Vibration",
+  "vibrationAlertDesc": "Mag-vibrate sa mga babala",
+  "alertDistance": "Alert Distance",
+  "darkMap": "Dark Map",
+  "darkMapDesc": "Gamitin ang dark map theme",
+  "languageSetting": "Wika",
+  "languageSettingDesc": "Palitan ang display language ng app",
+  "languageJapanese": "日本語",
+  "languageEnglish": "English",
+
+  "aboutApp": "Tungkol Sa",
+  "aboutAppDesc": "CHARI-PI - Cycling Safety Navigator",
+  "appVersion": "Version",
+  "aboutDialogContent": "Ang CHARI-PI ay isang navigation app na sumusuporta sa cycling safety.\n\nGumagamit ng OpenStreetMap data para magbigay ng real-time na notification para sa stop sign at traffic signal.\n\nMagbisikleta nang ligtas kasama ang CHARI-PI!",
+
+  "privacyPolicy": "Privacy Policy",
+  "privacyPolicyDesc": "Paano namin pinangangasiwaan ang personal at location data",
+  "securityPolicy": "Security Policy",
+  "securityPolicyDesc": "Information security management",
+  "termsOfService": "Terms of Service",
+  "termsOfServiceDesc": "Mga kondisyon ng paggamit ng serbisyo",
+  "disclaimer": "Disclaimer",
+  "disclaimerDesc": "Mga disclaimer ng serbisyo",
+  "commercialLaw": "Commercial Transaction Act",
+  "commercialLawDesc": "Business info at sales conditions",
+
+  "operatingCompany": "Operator",
+  "companyName": "TCI Corporation",
+  "companyAddress": "Shintaka 1-5-4, Yodogawa-ku, Osaka, Japan",
+
+  "planUpgrade": "I-upgrade",
+  "planChange": "Palitan",
+  "planUpgradePrompt": "I-upgrade ang plan para sa mas mabuting kaligtasan",
+  "planFreeWithWatch": "Libre · GPS Tracking enabled",
+
+  "familySafety": "Family Safety",
+  "familyPrompt": "Pangalagaan ang pamilya at team",
+  "corporateSafety": "Corporate Safety",
+  "gpsWatchFree": "GPS Tracking (Libre)",
+  "adminMode": "Admin Mode",
+  "employeeMode": "Employee Mode",
+  "watchingMode": "GPS Tracking aktibo",
+  "sharingGps": "Nagsheshare ng GPS",
+  "parentMode": "Parent Mode",
+  "childMode": "Child Mode",
+  "membersCount": "{count} empleyado",
+  "@membersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} anak",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "watchingPerson": "GPS tracking · {name}",
+  "@watchingPerson": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "beingWatched": "Nagsheshare ng GPS · Binabantayan",
+
+  "gpsWaiting": "GPS Standby",
+  "gpsHigh": "Mataas",
+  "gpsMedium": "Katamtaman",
+  "gpsLow": "Mababa",
+
+  "termsContentFull": "Salamat sa paggamit ng CHARI-PI.\n\nAng app na ito ay isang navigation tool para suportahan ang traffic safety habang nagbibisikleta.\n\n[Disclaimer]\n- Ang app na ito ay supplementary tool at hindi nagpapalaya sa rider sa duty of care.\n- Hindi ginagarantiya ang GPS at map data accuracy.\n- Palaging unahin ang safety awareness habang nagmamaneho.\n- Hindi mananagot ang developer sa mga aksidente.\n\n[Learning Content]\n- Ang traffic rule content ay batay sa opisyal na resources.\n- Suriin ang pinakabagong batas.\n\n[Location Data]\n- Gumagamit ang app ng GPS.\n- Ang location data ay on-device lamang."
+}

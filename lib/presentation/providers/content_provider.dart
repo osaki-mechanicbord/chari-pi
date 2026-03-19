@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/foundation.dart';
 import '../../data/models/learn_data.dart';
@@ -16,6 +15,7 @@ class ContentProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   bool _isOffline = false;
+  String _localeCode = 'ja';
 
   List<Map<String, dynamic>> get rules => _rules;
   List<Map<String, dynamic>> get quizzes => _quizzes;
@@ -29,7 +29,8 @@ class ContentProvider extends ChangeNotifier {
   static const Duration _cacheExpiry = Duration(hours: 6);
 
   /// 初期化：ローカルデータを即座にロード → API同期を試行
-  Future<void> initialize() async {
+  Future<void> initialize({String localeCode = 'ja'}) async {
+    _localeCode = localeCode;
     _isLoading = true;
     notifyListeners();
 
@@ -49,12 +50,12 @@ class ContentProvider extends ChangeNotifier {
   /// ローカルの静的データをロード（オフラインでも必ず動作）
   void _loadLocalData() {
     // learn_data.dart のデータを Map 形式に変換してロード
-    final localRules = LearnData.contents
+    final localRules = LearnData.getContents(_localeCode)
         .map((content) => content.toMap())
         .toList();
 
     // quiz_data.dart のデータを Map 形式に変換してロード
-    final localQuizzes = QuizData.questions
+    final localQuizzes = QuizData.getQuestions(_localeCode)
         .map((question) => question.toMap())
         .toList();
 
@@ -225,6 +226,13 @@ class ContentProvider extends ChangeNotifier {
         debugPrint('API sync error (using local data): $e');
       }
     }
+  }
+
+  Future<void> updateLocale(String localeCode) async {
+    if (_localeCode == localeCode) return;
+    _localeCode = localeCode;
+    _loadLocalData();
+    notifyListeners();
   }
 
   /// 強制リフレッシュ

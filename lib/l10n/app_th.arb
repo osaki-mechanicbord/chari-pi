@@ -1,0 +1,235 @@
+{
+  "@@locale": "th",
+
+  "appName": "CHARI-PI",
+  "appTagline": "ระบบนำทางความปลอดภัยจักรยาน",
+
+  "navMap": "แผนที่",
+  "navLearn": "เรียนรู้",
+  "navQuiz": "แบบทดสอบ",
+  "navLaw": "กฎหมาย",
+  "navLog": "ประวัติ",
+  "navSettings": "ตั้งค่า",
+
+  "splashSubtitle": "ระบบนำทางความปลอดภัยจักรยาน",
+  "loading": "กำลังโหลด...",
+
+  "termsTitle": "ข้อกำหนดการใช้งาน",
+  "agreeAndContinue": "ยอมรับและดำเนินการต่อ",
+
+  "startTitle": "เริ่มการขับขี่",
+  "startButton": "เริ่มนำทาง",
+  "locationPermissionRequired": "ต้องการสิทธิ์เข้าถึงตำแหน่ง",
+  "featureSafety": "ปลอดภัย",
+  "featureSafetyDesc": "แจ้งเตือนแบบเรียลไทม์",
+  "featureMap": "แผนที่",
+  "featureMapDesc": "ขับเคลื่อนด้วย OSM",
+  "featureLearn": "เรียนรู้",
+  "featureLearnDesc": "กฎจราจร",
+
+  "gpsSearching": "กำลังค้นหา GPS...",
+  "gpsAccuracy": "ความแม่นยำ GPS",
+  "stopSignAhead": "ป้ายหยุดข้างหน้า",
+  "trafficSignalAhead": "สัญญาณไฟจราจรข้างหน้า",
+  "onewayWarning": "ระวังทางเดียว",
+  "metersAhead": "ม. ข้างหน้า",
+  "demoMode": "สาธิต",
+  "demoModeButton": "โหมดสาธิต",
+  "gpsUnavailableTitle": "ไม่พบ GPS",
+  "gpsUnavailableMessage": "ไม่สามารถรับตำแหน่ง GPS\n\n• ตรวจสอบสิทธิ์ตำแหน่งของเบราว์เซอร์\n• เปิดบริการตำแหน่ง\n\nคุณสามารถลองโหมดสาธิต",
+  "closeButton": "ปิด",
+  "startWithDemo": "เริ่มสาธิต",
+  "warningCountUnit": "",
+  "warningMessageFormat": "{type} ใน {distance} ม.",
+  "@warningMessageFormat": {
+    "placeholders": {
+      "distance": {"type": "int"},
+      "type": {"type": "String"}
+    }
+  },
+  "nodeStopSign": "ป้ายหยุด",
+  "nodeTrafficSignal": "สัญญาณไฟจราจร",
+  "nodeOneway": "ทางเดียว",
+  "nodeWrongWay": "ขับสวนทาง",
+  "nodePedestrianRoad": "เขตคนเดินเท้า",
+  "nodeFootway": "ทางเท้า",
+  "nodeFootwayNoBicycle": "ทางเท้าห้ามจักรยาน",
+  "nodeCycleway": "เลนจักรยาน",
+  "nodeCrossing": "ทางข้าม",
+  "nodeNoBicycle": "ห้ามจักรยาน",
+  "nodeDismount": "เขตลงจักรยาน",
+  "nodeSpeedLimit": "จำกัดความเร็ว",
+  "nodeAccidentZone": "พื้นที่เกิดอุบัติเหตุบ่อย",
+  "nodeEnforcementZone": "พื้นที่ตรวจจับ",
+  "penaltyWrongWay": "ขับสวนทาง: จำคุกไม่เกิน 3 เดือนหรือปรับไม่เกิน 50,000 เยน",
+  "penaltyNoBicycle": "ฝ่าฝืนห้ามเข้า: ปรับไม่เกิน 50,000 เยน",
+  "penaltyStopSign": "ฝ่าป้ายหยุด: อยู่ในข่ายใบสั่งสีน้ำเงิน",
+  "penaltyEnforcement": "พื้นที่บังคับใช้กฎจราจร",
+
+  "logTitle": "ประวัติการขับขี่",
+  "noHistory": "ไม่มีประวัติ",
+  "totalDistance": "ระยะทางรวม",
+  "duration": "ระยะเวลา",
+  "warningsLabel": "การแจ้งเตือน",
+  "rideCount": "จำนวนเที่ยว",
+  "deleteHistory": "ลบประวัติ",
+  "deleteHistoryConfirm": "ลบประวัติทั้งหมด?",
+  "cancelButton": "ยกเลิก",
+  "deleteButton": "ลบ",
+  "startNavPrompt": "เริ่มนำทางเพื่อบันทึกการขับขี่",
+
+  "learnTitle": "เรียนรู้กฎจราจร",
+  "offlineLabel": "ออฟไลน์",
+  "refreshTooltip": "รีเฟรชข้อมูล",
+  "allCategories": "ทั้งหมด",
+  "sourceLabel": "แหล่ง: สำนักงานตำรวจแห่งชาติ / e-Gov",
+  "rulesCountFormat": "{count} กฎจราจร",
+  "@rulesCountFormat": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "loadingContent": "กำลังโหลดเนื้อหา...",
+  "retryButton": "ลองใหม่",
+  "noMatchingRules": "ไม่พบกฎที่ตรงกัน",
+  "catBasic": "กฎพื้นฐาน",
+  "catIntersection": "ทางแยก",
+  "catRoad": "การขับบนถนน",
+  "catEquipment": "อุปกรณ์",
+  "catProhibition": "ข้อห้าม",
+  "catSafety": "ความปลอดภัย",
+  "catInsurance": "ประกันภัย",
+  "catNewLaw": "กฎหมายใหม่",
+  "catRegistration": "การลงทะเบียน",
+
+  "quizTitle": "แบบทดสอบกฎจราจร",
+  "quizCorrect": "ถูกต้อง!",
+  "quizIncorrect": "ไม่ถูกต้อง...",
+  "quizScore": "คะแนน",
+  "quizNext": "คำถามต่อไป",
+  "quizFinish": "ดูผลลัพธ์",
+  "quizResult": "ผลลัพธ์",
+  "quizRetry": "ลองใหม่",
+  "quizStart": "เริ่มทดสอบ",
+  "quizTotal": "รวม",
+  "quizEasy": "ง่าย",
+  "quizMedium": "ปานกลาง",
+  "quizHard": "ยาก",
+  "quizAllLevels": "ทุกระดับ",
+  "quizDifficulty": "ระดับความยาก",
+  "quizQuestionCount": "จำนวนคำถาม",
+  "quizQuestionUnit": "ข้อ",
+  "quizNoQuestions": "ไม่พบแบบทดสอบ",
+  "quizQuestionProgress": "ข้อ {current} / {total}",
+  "@quizQuestionProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizScoreResult": "{score} / {total} ถูกต้อง",
+  "@quizScoreResult": {
+    "placeholders": {
+      "score": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizGreatMessage": "ยอดเยี่ยม! คุณเข้าใจกฎจราจรดี",
+  "quizTryAgainMessage": "พยายามอีก!\nทบทวนกฎจราจรอีกครั้ง",
+  "quizSourceNote": "แหล่ง: พ.ร.บ. จราจรทางบก / สำนักงานตำรวจแห่งชาติ\nเนื้อหาอ้างอิงแหล่งข้อมูลทางการ กรุณาตรวจสอบกฎหมายล่าสุด",
+
+  "lawUpdatesTitle": "อัปเดตกฎหมาย",
+  "lawUpdatesInfo": "ข้อมูลล่าสุดเกี่ยวกับกฎหมายจักรยาน",
+  "lawNoUpdates": "ยังไม่มีอัปเดต",
+  "lawUpcoming": "กำลังจะมา",
+  "lawEnacted": "มีผลบังคับใช้",
+  "lawEffectiveDate": "มีผลบังคับ: {date}",
+  "@lawEffectiveDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "lawCheckSource": "ตรวจสอบแหล่ง",
+
+  "settingsTitle": "ตั้งค่า",
+  "planSection": "แผน",
+  "alertSection": "ตั้งค่าการแจ้งเตือน",
+  "displaySection": "การแสดงผล",
+  "appInfoSection": "ข้อมูลแอป",
+  "legalSection": "ข้อมูลทางกฎหมาย",
+  "languageSection": "ภาษา",
+
+  "voiceAlert": "แจ้งเตือนด้วยเสียง",
+  "voiceAlertDesc": "เสียงแจ้งเตือนป้ายหยุดและสัญญาณไฟ",
+  "vibrationAlert": "การสั่น",
+  "vibrationAlertDesc": "สั่นเมื่อมีการเตือน",
+  "alertDistance": "ระยะทางแจ้งเตือน",
+  "darkMap": "แผนที่มืด",
+  "darkMapDesc": "ใช้ธีมแผนที่มืด",
+  "languageSetting": "ภาษา",
+  "languageSettingDesc": "เปลี่ยนภาษาแสดงผลของแอป",
+  "languageJapanese": "日本語",
+  "languageEnglish": "English",
+
+  "aboutApp": "เกี่ยวกับ",
+  "aboutAppDesc": "CHARI-PI - ระบบนำทางความปลอดภัยจักรยาน",
+  "appVersion": "เวอร์ชัน",
+  "aboutDialogContent": "CHARI-PI คือแอปนำทางที่สนับสนุนความปลอดภัยในการขับจักรยาน\n\nใช้ข้อมูล OpenStreetMap เพื่อแจ้งเตือนป้ายหยุดและสัญญาณไฟแบบเรียลไทม์\n\nขับจักรยานปลอดภัยกับ CHARI-PI!",
+
+  "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+  "privacyPolicyDesc": "การจัดการข้อมูลส่วนบุคคลและตำแหน่ง",
+  "securityPolicy": "นโยบายความปลอดภัย",
+  "securityPolicyDesc": "การจัดการความปลอดภัยข้อมูล",
+  "termsOfService": "ข้อกำหนดการใช้งาน",
+  "termsOfServiceDesc": "เงื่อนไขการใช้บริการ",
+  "disclaimer": "ข้อจำกัดความรับผิดชอบ",
+  "disclaimerDesc": "ข้อจำกัดความรับผิดชอบของบริการ",
+  "commercialLaw": "พ.ร.บ. การค้าพาณิชย์",
+  "commercialLawDesc": "ข้อมูลธุรกิจและเงื่อนไขการขาย",
+
+  "operatingCompany": "ผู้ดำเนินการ",
+  "companyName": "TCI Corporation",
+  "companyAddress": "Shintaka 1-5-4, Yodogawa-ku, Osaka, ญี่ปุ่น",
+
+  "planUpgrade": "อัปเกรด",
+  "planChange": "เปลี่ยน",
+  "planUpgradePrompt": "อัปเกรดแผนเพื่อความปลอดภัยที่ดีขึ้น",
+  "planFreeWithWatch": "ฟรี · เปิดใช้การติดตาม GPS",
+
+  "familySafety": "ความปลอดภัยครอบครัว",
+  "familyPrompt": "ดูแลครอบครัวและทีม",
+  "corporateSafety": "ความปลอดภัยองค์กร",
+  "gpsWatchFree": "ติดตาม GPS (ฟรี)",
+  "adminMode": "โหมดผู้ดูแล",
+  "employeeMode": "โหมดพนักงาน",
+  "watchingMode": "กำลังติดตาม GPS",
+  "sharingGps": "กำลังแชร์ GPS",
+  "parentMode": "โหมดผู้ปกครอง",
+  "childMode": "โหมดเด็ก",
+  "membersCount": "{count} พนักงาน",
+  "@membersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} คน",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "watchingPerson": "ติดตาม GPS · {name}",
+  "@watchingPerson": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "beingWatched": "กำลังแชร์ GPS · กำลังถูกดูแล",
+
+  "gpsWaiting": "GPS รอ",
+  "gpsHigh": "สูง",
+  "gpsMedium": "ปานกลาง",
+  "gpsLow": "ต่ำ",
+
+  "termsContentFull": "ขอบคุณที่ใช้ CHARI-PI\n\nแอปนี้เป็นเครื่องมือนำทางเพื่อสนับสนุนความปลอดภัยในการจราจรขณะขับจักรยาน\n\n[ข้อจำกัดความรับผิดชอบ]\n- แอปนี้เป็นเครื่องมือเสริม ไม่ยกเว้นหน้าที่ระวังของผู้ขับ\n- ไม่รับประกันความแม่นยำของ GPS และข้อมูลแผนที่\n- ให้ความสำคัญกับความปลอดภัยเสมอ\n- ผู้พัฒนาไม่รับผิดชอบต่ออุบัติเหตุ\n\n[เนื้อหาการเรียนรู้]\n- เนื้อหากฎจราจรอ้างอิงแหล่งข้อมูลทางการ\n- กรุณาตรวจสอบกฎหมายล่าสุด\n\n[ข้อมูลตำแหน่ง]\n- แอปใช้ GPS\n- ข้อมูลตำแหน่งประมวลผลในอุปกรณ์เท่านั้น"
+}

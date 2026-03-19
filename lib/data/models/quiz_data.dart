@@ -1,3 +1,11 @@
+import 'quiz_data_ja.dart';
+import 'quiz_data_en.dart';
+import 'quiz_data_ko.dart';
+import 'quiz_data_zh.dart';
+import 'quiz_data_vi.dart';
+import 'quiz_data_th.dart';
+import 'quiz_data_fil.dart';
+
 class QuizQuestion {
   final String question;
   final List<String> options;
@@ -15,7 +23,6 @@ class QuizQuestion {
     this.category = 'basic',
   });
 
-  /// ContentProvider が使う Map<String, dynamic> 形式に変換
   Map<String, dynamic> toMap() {
     return {
       'question': question,
@@ -29,244 +36,28 @@ class QuizQuestion {
 }
 
 class QuizData {
-  static const List<QuizQuestion> questions = [
-    // ===== easy: 初級 =====
-    QuizQuestion(
-      question: '自転車は道路のどちら側を走行しますか？',
-      options: ['右側', '左側', 'どちらでもよい', '中央'],
-      correctIndex: 1,
-      explanation: '自転車は車両なので、道路の左側を走行する義務があります（道路交通法第17条）。',
-      difficulty: 'easy',
-      category: 'basic',
-    ),
-    QuizQuestion(
-      question: '一時停止の標識がある交差点では、自転車はどうすべきですか？',
-      options: ['徐行して通過', '完全に停止してから安全確認', 'ベルを鳴らして通過', '歩行者がいなければ通過可能'],
-      correctIndex: 1,
-      explanation: '一時停止の標識では、必ず完全に停止し、左右の安全を確認してから通行します。',
-      difficulty: 'easy',
-      category: 'intersection',
-    ),
-    QuizQuestion(
-      question: '夜間の自転車走行で義務付けられているものは？',
-      options: ['ヘルメット', '前照灯と尾灯（反射板）', '反射ベスト', 'ベル'],
-      correctIndex: 1,
-      explanation: '夜間は前照灯の点灯と尾灯または反射板の装着が義務です（道路交通法第52条）。',
-      difficulty: 'easy',
-      category: 'equipment',
-    ),
-    QuizQuestion(
-      question: '信号機のない横断歩道に歩行者がいた場合、自転車は？',
-      options: ['そのまま通過', 'ベルを鳴らして通過', '一時停止して歩行者を優先', '歩行者に避けてもらう'],
-      correctIndex: 2,
-      explanation: '横断歩道では歩行者が最優先です。歩行者がいる場合は必ず一時停止しなければなりません。',
-      difficulty: 'easy',
-      category: 'intersection',
-    ),
-    QuizQuestion(
-      question: '自転車の傘差し運転は？',
-      options: ['雨の日なら許可', '多くの都道府県で禁止', '風が強くなければ許可', '許可されている'],
-      correctIndex: 1,
-      explanation: '傘差し運転は片手運転となり危険です。多くの都道府県の条例で禁止されています。レインコートを着用しましょう。',
-      difficulty: 'easy',
-      category: 'prohibition',
-    ),
-    QuizQuestion(
-      question: '自転車は道路交通法上どのように分類されていますか？',
-      options: ['歩行者', '軽車両', '原動機付自転車', '特殊車両'],
-      correctIndex: 1,
-      explanation: '自転車は道路交通法上「軽車両」に分類されます。車両としての交通ルールを守る必要があります。',
-      difficulty: 'easy',
-      category: 'basic',
-    ),
-    QuizQuestion(
-      question: '防犯登録は自転車を購入したら必要ですか？',
-      options: ['任意である', '法律で義務づけられている', '高額な自転車のみ必要', '盗難に遭ってから登録すればよい'],
-      correctIndex: 1,
-      explanation: '自転車の防犯登録は法律で義務づけられています。購入時に自転車販売店で登録しましょう。',
-      difficulty: 'easy',
-      category: 'registration',
-    ),
-    QuizQuestion(
-      question: '自転車で車道を走る場合、正しいのはどれですか？',
-      options: ['右側の歩道寄りを走る', '車道の中央を走る', '車道の左側端を走る', '好きな場所を走れる'],
-      correctIndex: 2,
-      explanation: '自転車は車道の左側端を走行する義務があります。右側通行は逆走となり非常に危険です。',
-      difficulty: 'easy',
-      category: 'basic',
-    ),
+  /// 後方互換: 既存コードが QuizData.questions を参照している場合
+  static const List<QuizQuestion> questions = QuizDataJa.questions;
 
-    // ===== medium: 中級 =====
-    QuizQuestion(
-      question: '自転車で歩道を走行できる条件は？',
-      options: [
-        'いつでも走行可能',
-        '「自転車通行可」の標識がある場合等に限られる',
-        '歩行者がいない場合のみ',
-        '雨の日だけ',
-      ],
-      correctIndex: 1,
-      explanation: '歩道は原則走行禁止です。「自転車通行可」の標識がある場合、13歳未満・70歳以上、車道が危険な場合に限り通行できます。',
-      difficulty: 'medium',
-      category: 'basic',
-    ),
-    QuizQuestion(
-      question: '自転車でイヤホンをつけて走行することは？',
-      options: ['許可されている', '片耳なら許可', '多くの都道府県で禁止', '音量が小さければ許可'],
-      correctIndex: 2,
-      explanation: '多くの都道府県の条例で、イヤホン等を使用して安全な運転に必要な音が聞こえない状態での運転は禁止されています。',
-      difficulty: 'medium',
-      category: 'prohibition',
-    ),
-    QuizQuestion(
-      question: '自転車の二人乗りが許可される条件は？',
-      options: [
-        '短距離なら許可',
-        '幼児用座席に6歳未満の子供を乗せる場合',
-        '大人同士でも許可',
-        '全面的に禁止',
-      ],
-      correctIndex: 1,
-      explanation: '16歳以上の運転者が、幼児用座席に6歳未満の幼児を1人乗せる場合に限り許可されます。',
-      difficulty: 'medium',
-      category: 'prohibition',
-    ),
-    QuizQuestion(
-      question: '2023年4月から自転車のヘルメット着用は？',
-      options: ['義務化された', '努力義務化された', '推奨のまま', '13歳未満のみ義務'],
-      correctIndex: 1,
-      explanation: '2023年4月1日から、全ての自転車利用者にヘルメットの着用が努力義務化されました（道路交通法第63条の11）。',
-      difficulty: 'medium',
-      category: 'equipment',
-    ),
-    QuizQuestion(
-      question: '自転車で右折するとき、正しい方法は？',
-      options: ['直接右折する', '二段階右折をする', '歩行者信号に従って横断する', '手信号を出せば直接右折できる'],
-      correctIndex: 1,
-      explanation: '自転車は交差点で右折する場合、二段階右折が必要です。まず直進し、向きを変えて対面の信号に従います。',
-      difficulty: 'medium',
-      category: 'intersection',
-    ),
-    QuizQuestion(
-      question: '自転車の並走（横に並んで走ること）は？',
-      options: ['いつでも可能', '「並進可」の標識がある場合のみ可能', '2台までなら可能', '3台以上は禁止'],
-      correctIndex: 1,
-      explanation: '自転車の並走は原則禁止です。「並進可」の標識がある場合のみ2台までの並走が認められます。',
-      difficulty: 'medium',
-      category: 'prohibition',
-    ),
-    QuizQuestion(
-      question: '雨天時、自転車のブレーキの制動距離はどうなりますか？',
-      options: ['変わらない', '約2倍以上に伸びる', '少し短くなる', '天候は関係ない'],
-      correctIndex: 1,
-      explanation: '雨天時はブレーキの効きが悪くなり、制動距離が通常の2倍以上に伸びることがあります。早めのブレーキを心がけましょう。',
-      difficulty: 'medium',
-      category: 'safety',
-    ),
-    QuizQuestion(
-      question: '自転車の前照灯に必要な明るさの基準は？',
-      options: ['特に基準なし', '10m先を確認できる明るさ', '50m先を確認できる明るさ', '100m先を確認できる明るさ'],
-      correctIndex: 1,
-      explanation: '自転車の前照灯は白色または淡黄色で、10m先の障害物を確認できる明るさが必要とされています。',
-      difficulty: 'medium',
-      category: 'equipment',
-    ),
-    QuizQuestion(
-      question: '「自転車を除く」の補助標識がない一方通行路で、自転車は？',
-      options: ['逆走してもよい', '逆走は道路交通法違反', '徐行すれば逆走可能', '自転車はすべての一方通行を無視できる'],
-      correctIndex: 1,
-      explanation: '「自転車を除く」の補助標識がない場合、自転車も一方通行の規制に従わなければなりません。逆走は違反です。',
-      difficulty: 'medium',
-      category: 'road',
-    ),
-
-    // ===== hard: 上級 =====
-    QuizQuestion(
-      question: '自転車の飲酒運転の罰則は？',
-      options: ['罰則なし', '5万円以下の罰金', '5年以下の懲役または100万円以下の罰金', '注意のみ'],
-      correctIndex: 2,
-      explanation: '自転車も車両です。飲酒運転（酒酔い運転）は5年以下の懲役または100万円以下の罰金が科されます。',
-      difficulty: 'hard',
-      category: 'prohibition',
-    ),
-    QuizQuestion(
-      question: '2024年11月からの法改正で、ながらスマホの罰則は？',
-      options: [
-        '注意のみ',
-        '反則金5,000円',
-        '6ヶ月以下の懲役又は10万円以下の罰金',
-        '1万円以下の罰金',
-      ],
-      correctIndex: 2,
-      explanation: '2024年11月の法改正により、自転車のながらスマホは6ヶ月以下の懲役又は10万円以下の罰金となりました。交通の危険を生じさせた場合はさらに重い罰則です。',
-      difficulty: 'hard',
-      category: 'new_law',
-    ),
-    QuizQuestion(
-      question: '2024年11月から導入された自転車の「青切符」の反則金、信号無視はいくら？',
-      options: ['3,000円', '5,000円', '6,000円', '10,000円'],
-      correctIndex: 2,
-      explanation: '2024年11月から導入された青切符制度では、自転車の信号無視の反則金は6,000円です。16歳以上が対象です。',
-      difficulty: 'hard',
-      category: 'new_law',
-    ),
-    QuizQuestion(
-      question: '自転車事故の損害賠償、過去の判例で最も高額だったのは約いくら？',
-      options: ['約500万円', '約1,000万円', '約5,000万円', '約9,500万円'],
-      correctIndex: 3,
-      explanation: '2013年の神戸地裁判決で、小学生が起こした自転車事故に対し約9,500万円の賠償命令が出ています。自転車保険の加入が重要です。',
-      difficulty: 'hard',
-      category: 'insurance',
-    ),
-    QuizQuestion(
-      question: '3年以内に2回以上の危険行為で摘発された場合、どうなりますか？',
-      options: ['罰金のみ', '免許停止', '自転車運転者講習の受講が義務', '自転車の使用禁止'],
-      correctIndex: 2,
-      explanation: '2015年6月施行の自転車運転者講習制度により、3年以内に2回以上の危険行為で摘発されると、自転車運転者講習（手数料6,000円、3時間）の受講が義務づけられます。',
-      difficulty: 'hard',
-      category: 'basic',
-    ),
-    QuizQuestion(
-      question: '歩道を走行する際の正しいルールはどれですか？',
-      options: [
-        '歩行者の邪魔にならなければどこでも走行可能',
-        '歩道の車道寄りを徐行し、歩行者の通行を妨げない',
-        'ベルを鳴らして歩行者をどかす',
-        '歩道の中央を走行する',
-      ],
-      correctIndex: 1,
-      explanation: '歩道を走行する場合は、車道寄りを徐行し、歩行者の通行を妨げてはなりません。歩行者にベルを鳴らすのも違反です。',
-      difficulty: 'hard',
-      category: 'basic',
-    ),
-    QuizQuestion(
-      question: '2024年11月の法改正で新設された「酒気帯び運転」の罰則は？',
-      options: [
-        '反則金5,000円',
-        '1年以下の懲役又は30万円以下の罰金',
-        '3年以下の懲役又は50万円以下の罰金',
-        '5年以下の懲役又は100万円以下の罰金',
-      ],
-      correctIndex: 2,
-      explanation: '2024年11月の法改正で新設された自転車の酒気帯び運転の罰則は、3年以下の懲役又は50万円以下の罰金です。従来の酒酔い運転は5年以下・100万円以下です。',
-      difficulty: 'hard',
-      category: 'new_law',
-    ),
-    QuizQuestion(
-      question: '手信号で右折の合図を出すタイミングは？',
-      options: ['右折する直前', '右折の10m手前', '右折の30m手前', '右折の50m手前'],
-      correctIndex: 2,
-      explanation: '右左折の合図は30m手前から出す必要があります。進路変更の場合は3秒前に合図を出します。',
-      difficulty: 'hard',
-      category: 'safety',
-    ),
-    QuizQuestion(
-      question: '自転車保険が義務化されている地域で、未加入の場合は？',
-      options: ['罰則がある', '現状では罰則はないが義務違反', '何も問題ない', '自転車を没収される'],
-      correctIndex: 1,
-      explanation: '多くの自治体で自転車保険の加入が義務化されていますが、現状では未加入に対する罰則規定はありません。ただし義務違反であり、事故時のリスクは自己責任となります。',
-      difficulty: 'hard',
-      category: 'insurance',
-    ),
-  ];
+  /// ロケールに応じたクイズデータを返す
+  static List<QuizQuestion> getQuestions(String localeCode) {
+    switch (localeCode) {
+      case 'ja':
+        return QuizDataJa.questions;
+      case 'en':
+        return QuizDataEn.questions;
+      case 'ko':
+        return QuizDataKo.questions;
+      case 'zh':
+        return QuizDataZh.questions;
+      case 'vi':
+        return QuizDataVi.questions;
+      case 'th':
+        return QuizDataTh.questions;
+      case 'fil':
+        return QuizDataFil.questions;
+      default:
+        return QuizDataJa.questions;
+    }
+  }
 }

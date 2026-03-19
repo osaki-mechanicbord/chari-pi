@@ -1,0 +1,235 @@
+{
+  "@@locale": "vi",
+
+  "appName": "CHARI-PI",
+  "appTagline": "Hoa tiêu an toàn cho xe đạp",
+
+  "navMap": "Bản đồ",
+  "navLearn": "Học",
+  "navQuiz": "Trắc nghiệm",
+  "navLaw": "Luật",
+  "navLog": "Lịch sử",
+  "navSettings": "Cài đặt",
+
+  "splashSubtitle": "Hoa tiêu an toàn xe đạp",
+  "loading": "Đang tải...",
+
+  "termsTitle": "Điều khoản sử dụng",
+  "agreeAndContinue": "Đồng ý & Tiếp tục",
+
+  "startTitle": "Bắt đầu chuyến đi",
+  "startButton": "Bắt đầu",
+  "locationPermissionRequired": "Cần quyền truy cập vị trí",
+  "featureSafety": "An toàn",
+  "featureSafetyDesc": "Cảnh báo thời gian thực",
+  "featureMap": "Bản đồ",
+  "featureMapDesc": "Hỗ trợ OSM",
+  "featureLearn": "Học",
+  "featureLearnDesc": "Luật giao thông",
+
+  "gpsSearching": "Đang tìm GPS...",
+  "gpsAccuracy": "Độ chính xác GPS",
+  "stopSignAhead": "Biển dừng phía trước",
+  "trafficSignalAhead": "Đèn tín hiệu phía trước",
+  "onewayWarning": "Chú ý đường một chiều",
+  "metersAhead": "m phía trước",
+  "demoMode": "Demo",
+  "demoModeButton": "Chế độ Demo",
+  "gpsUnavailableTitle": "Không tìm thấy GPS",
+  "gpsUnavailableMessage": "Không thể lấy vị trí GPS.\n\n• Kiểm tra quyền vị trí trình duyệt\n• Bật dịch vụ định vị\n\nBạn có thể thử chế độ Demo.",
+  "closeButton": "Đóng",
+  "startWithDemo": "Bắt đầu Demo",
+  "warningCountUnit": "",
+  "warningMessageFormat": "{type} trong {distance}m",
+  "@warningMessageFormat": {
+    "placeholders": {
+      "distance": {"type": "int"},
+      "type": {"type": "String"}
+    }
+  },
+  "nodeStopSign": "Biển dừng",
+  "nodeTrafficSignal": "Đèn tín hiệu",
+  "nodeOneway": "Đường một chiều",
+  "nodeWrongWay": "Đi ngược chiều",
+  "nodePedestrianRoad": "Khu vực người đi bộ",
+  "nodeFootway": "Vỉa hè",
+  "nodeFootwayNoBicycle": "Vỉa hè cấm xe đạp",
+  "nodeCycleway": "Làn xe đạp",
+  "nodeCrossing": "Vạch qua đường",
+  "nodeNoBicycle": "Cấm xe đạp",
+  "nodeDismount": "Khu vực xuống xe",
+  "nodeSpeedLimit": "Giới hạn tốc độ",
+  "nodeAccidentZone": "Khu vực hay tai nạn",
+  "nodeEnforcementZone": "Khu vực kiểm tra",
+  "penaltyWrongWay": "Đi ngược chiều: phạt tù đến 3 tháng hoặc phạt tiền đến 50.000 yên",
+  "penaltyNoBicycle": "Vi phạm cấm vào: phạt tiền đến 50.000 yên",
+  "penaltyStopSign": "Vượt biển dừng: bị phạt vé xanh",
+  "penaltyEnforcement": "Khu vực kiểm tra giao thông",
+
+  "logTitle": "Lịch sử chuyến đi",
+  "noHistory": "Chưa có lịch sử",
+  "totalDistance": "Tổng quãng đường",
+  "duration": "Thời gian",
+  "warningsLabel": "Cảnh báo",
+  "rideCount": "Số chuyến",
+  "deleteHistory": "Xóa lịch sử",
+  "deleteHistoryConfirm": "Xóa toàn bộ lịch sử?",
+  "cancelButton": "Hủy",
+  "deleteButton": "Xóa",
+  "startNavPrompt": "Bắt đầu điều hướng để ghi lại chuyến đi",
+
+  "learnTitle": "Học luật giao thông",
+  "offlineLabel": "Ngoại tuyến",
+  "refreshTooltip": "Làm mới dữ liệu",
+  "allCategories": "Tất cả",
+  "sourceLabel": "Nguồn: Cơ quan Cảnh sát Quốc gia / e-Gov",
+  "rulesCountFormat": "{count} luật giao thông",
+  "@rulesCountFormat": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "loadingContent": "Đang tải nội dung...",
+  "retryButton": "Thử lại",
+  "noMatchingRules": "Không tìm thấy luật phù hợp",
+  "catBasic": "Luật cơ bản",
+  "catIntersection": "Ngã tư",
+  "catRoad": "Đi đường",
+  "catEquipment": "Trang bị",
+  "catProhibition": "Cấm",
+  "catSafety": "An toàn",
+  "catInsurance": "Bảo hiểm",
+  "catNewLaw": "Luật mới",
+  "catRegistration": "Đăng ký",
+
+  "quizTitle": "Trắc nghiệm luật giao thông",
+  "quizCorrect": "Đúng!",
+  "quizIncorrect": "Sai...",
+  "quizScore": "Điểm",
+  "quizNext": "Câu tiếp",
+  "quizFinish": "Xem kết quả",
+  "quizResult": "Kết quả",
+  "quizRetry": "Thử lại",
+  "quizStart": "Bắt đầu",
+  "quizTotal": "Tổng",
+  "quizEasy": "Dễ",
+  "quizMedium": "Trung bình",
+  "quizHard": "Khó",
+  "quizAllLevels": "Tất cả",
+  "quizDifficulty": "Độ khó",
+  "quizQuestionCount": "Số câu hỏi",
+  "quizQuestionUnit": "câu",
+  "quizNoQuestions": "Không tìm thấy câu hỏi",
+  "quizQuestionProgress": "Câu {current} / {total}",
+  "@quizQuestionProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizScoreResult": "{score} / {total} đúng",
+  "@quizScoreResult": {
+    "placeholders": {
+      "score": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "quizGreatMessage": "Xuất sắc! Bạn hiểu rõ luật giao thông.",
+  "quizTryAgainMessage": "Hãy cố gắng thêm!\nÔn lại luật giao thông nhé.",
+  "quizSourceNote": "Nguồn: Luật Giao thông Đường bộ / Cổng thông tin xe đạp của Cơ quan Cảnh sát Quốc gia\nNội dung dựa trên nguồn chính thức. Vui lòng kiểm tra luật mới nhất.",
+
+  "lawUpdatesTitle": "Cập nhật luật",
+  "lawUpdatesInfo": "Thông tin mới nhất về thay đổi luật xe đạp",
+  "lawNoUpdates": "Chưa có cập nhật",
+  "lawUpcoming": "Sắp tới",
+  "lawEnacted": "Đã có hiệu lực",
+  "lawEffectiveDate": "Có hiệu lực: {date}",
+  "@lawEffectiveDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "lawCheckSource": "Kiểm tra nguồn",
+
+  "settingsTitle": "Cài đặt",
+  "planSection": "Gói dịch vụ",
+  "alertSection": "Cài đặt cảnh báo",
+  "displaySection": "Hiển thị",
+  "appInfoSection": "Thông tin ứng dụng",
+  "legalSection": "Pháp lý",
+  "languageSection": "Ngôn ngữ",
+
+  "voiceAlert": "Cảnh báo giọng nói",
+  "voiceAlertDesc": "Cảnh báo âm thanh biển dừng & đèn",
+  "vibrationAlert": "Rung",
+  "vibrationAlertDesc": "Rung khi có cảnh báo",
+  "alertDistance": "Khoảng cách cảnh báo",
+  "darkMap": "Bản đồ tối",
+  "darkMapDesc": "Sử dụng giao diện bản đồ tối",
+  "languageSetting": "Ngôn ngữ",
+  "languageSettingDesc": "Thay đổi ngôn ngữ hiển thị",
+  "languageJapanese": "日本語",
+  "languageEnglish": "English",
+
+  "aboutApp": "Giới thiệu",
+  "aboutAppDesc": "CHARI-PI - Hoa tiêu an toàn xe đạp",
+  "appVersion": "Phiên bản",
+  "aboutDialogContent": "CHARI-PI là ứng dụng điều hướng hỗ trợ an toàn xe đạp.\n\nSử dụng dữ liệu OpenStreetMap để thông báo biển dừng và đèn tín hiệu theo thời gian thực.\n\nHãy đi xe đạp an toàn cùng CHARI-PI!",
+
+  "privacyPolicy": "Chính sách bảo mật",
+  "privacyPolicyDesc": "Cách xử lý dữ liệu cá nhân & vị trí",
+  "securityPolicy": "Chính sách bảo mật thông tin",
+  "securityPolicyDesc": "Quản lý bảo mật thông tin",
+  "termsOfService": "Điều khoản dịch vụ",
+  "termsOfServiceDesc": "Điều kiện sử dụng dịch vụ",
+  "disclaimer": "Miễn trừ trách nhiệm",
+  "disclaimerDesc": "Miễn trừ trách nhiệm dịch vụ",
+  "commercialLaw": "Thông tin giao dịch thương mại",
+  "commercialLawDesc": "Thông tin doanh nghiệp & điều kiện bán hàng",
+
+  "operatingCompany": "Công ty vận hành",
+  "companyName": "TCI Corporation",
+  "companyAddress": "Shintaka 1-5-4, Yodogawa-ku, Osaka, Nhật Bản",
+
+  "planUpgrade": "Nâng cấp",
+  "planChange": "Thay đổi",
+  "planUpgradePrompt": "Nâng cấp gói để an toàn hơn",
+  "planFreeWithWatch": "Miễn phí · Theo dõi GPS",
+
+  "familySafety": "An toàn gia đình",
+  "familyPrompt": "Bảo vệ gia đình & nhóm",
+  "corporateSafety": "An toàn doanh nghiệp",
+  "gpsWatchFree": "Theo dõi GPS (Miễn phí)",
+  "adminMode": "Chế độ quản trị",
+  "employeeMode": "Chế độ nhân viên",
+  "watchingMode": "Đang theo dõi GPS",
+  "sharingGps": "Đang chia sẻ GPS",
+  "parentMode": "Chế độ phụ huynh",
+  "childMode": "Chế độ con",
+  "membersCount": "{count} nhân viên",
+  "@membersCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "childrenCount": "{count} con",
+  "@childrenCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "watchingPerson": "Theo dõi GPS · {name}",
+  "@watchingPerson": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "beingWatched": "Đang chia sẻ GPS · Đang được theo dõi",
+
+  "gpsWaiting": "GPS chờ",
+  "gpsHigh": "Cao",
+  "gpsMedium": "Trung bình",
+  "gpsLow": "Thấp",
+
+  "termsContentFull": "Cảm ơn bạn đã sử dụng CHARI-PI.\n\nỨng dụng này là công cụ điều hướng hỗ trợ an toàn giao thông khi đi xe đạp.\n\n[Miễn trừ trách nhiệm]\n- Ứng dụng này là công cụ hỗ trợ, không miễn trừ nghĩa vụ chú ý của người lái.\n- Độ chính xác GPS và dữ liệu bản đồ không được đảm bảo.\n- Luôn ưu tiên nhận thức an toàn khi đi xe.\n- Nhà phát triển không chịu trách nhiệm về tai nạn do sử dụng ứng dụng.\n\n[Nội dung học tập]\n- Nội dung luật giao thông dựa trên tài liệu chính thức.\n- Vui lòng xác nhận với luật mới nhất.\n\n[Dữ liệu vị trí]\n- Ứng dụng sử dụng GPS.\n- Dữ liệu vị trí chỉ được xử lý trên thiết bị."
+}

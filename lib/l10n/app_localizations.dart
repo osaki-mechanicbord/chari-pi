@@ -6,8 +6,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_fil.dart';
 import 'app_localizations_ja.dart';
 import 'app_localizations_ko.dart';
+import 'app_localizations_th.dart';
+import 'app_localizations_vi.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -96,8 +99,11 @@ abstract class L10n {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('fil'),
     Locale('ja'),
     Locale('ko'),
+    Locale('th'),
+    Locale('vi'),
     Locale('zh'),
   ];
 
@@ -1131,8 +1137,15 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'ja', 'ko', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'en',
+    'fil',
+    'ja',
+    'ko',
+    'th',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -1143,10 +1156,16 @@ L10n lookupL10n(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return L10nEn();
+    case 'fil':
+      return L10nFil();
     case 'ja':
       return L10nJa();
     case 'ko':
       return L10nKo();
+    case 'th':
+      return L10nTh();
+    case 'vi':
+      return L10nVi();
     case 'zh':
       return L10nZh();
   }
