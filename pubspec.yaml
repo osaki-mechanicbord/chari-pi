@@ -1,7 +1,7 @@
 name: cycle_guard
 description: "CHARI-PI (チャリッピー) - Cycling safety navigation app for Japan"
 publish_to: 'none'
-version: 1.2.0+5
+version: 1.2.0+6
 
 environment:
   sdk: ^3.9.2

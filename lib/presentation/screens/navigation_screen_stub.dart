@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:geolocator/geolocator.dart';
 
 /// Native mobile (Android/iOS) GPS implementation using geolocator package
@@ -60,21 +61,38 @@ Future<void> _initAndListen(
     // Non-fatal — stream will provide positions
   }
 
-  // Start continuous position stream
-  // Android: uses FusedLocationProvider for battery-efficient high-accuracy tracking
-  final locationSettings = AndroidSettings(
-    accuracy: LocationAccuracy.high,
-    distanceFilter: 3, // meters — update every 3m for cycling
-    intervalDuration: const Duration(seconds: 1),
-    foregroundNotificationConfig: const ForegroundNotificationConfig(
-      notificationTitle: 'CHARI-PI',
-      notificationText: 'GPS\u3067\u5b89\u5168\u30ca\u30d3\u30b2\u30fc\u30b7\u30e7\u30f3\u4e2d...',
-      notificationIcon: AndroidResource(name: 'ic_launcher', defType: 'mipmap'),
-      enableWakeLock: true,
-      enableWifiLock: true,
-      setOngoing: true,
-    ),
-  );
+  // Platform-specific location settings
+  late LocationSettings locationSettings;
+
+  if (Platform.isAndroid) {
+    locationSettings = AndroidSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 3,
+      intervalDuration: const Duration(seconds: 1),
+      foregroundNotificationConfig: const ForegroundNotificationConfig(
+        notificationTitle: 'CHARI-PI',
+        notificationText: 'GPS\u3067\u5b89\u5168\u30ca\u30d3\u30b2\u30fc\u30b7\u30e7\u30f3\u4e2d...',
+        notificationIcon: AndroidResource(name: 'ic_launcher', defType: 'mipmap'),
+        enableWakeLock: true,
+        enableWifiLock: true,
+        setOngoing: true,
+      ),
+    );
+  } else if (Platform.isIOS) {
+    locationSettings = AppleSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 3,
+      activityType: ActivityType.fitness,
+      pauseLocationUpdatesAutomatically: false,
+      showBackgroundLocationIndicator: true,
+      allowBackgroundLocationUpdates: true,
+    );
+  } else {
+    locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 3,
+    );
+  }
 
   Geolocator.getPositionStream(locationSettings: locationSettings).listen(
     (Position pos) {
