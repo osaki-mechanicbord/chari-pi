@@ -27,8 +27,6 @@ workflows:
         script: |
           cd ios
           pod install
-      - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
       - name: Flutter analyze
         script: flutter analyze --no-fatal-warnings
       - name: Build iOS
