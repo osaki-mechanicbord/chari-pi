@@ -56,15 +56,10 @@ class _StartScreenState extends State<StartScreen>
                     return Transform.scale(
                       scale: _pulseAnimation.value,
                       child: Container(
-                        width: 160,
-                        height: 160,
+                        width: 180,
+                        height: 180,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [AppColors.primaryLight, AppColors.accentCyan],
-                          ),
                           boxShadow: [
                             BoxShadow(
                               color: AppColors.accentCyan.withValues(alpha: 0.3),
@@ -73,7 +68,14 @@ class _StartScreenState extends State<StartScreen>
                             ),
                           ],
                         ),
-                        child: const Icon(Icons.directions_bike, size: 80, color: Colors.white),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/mascot_character.png',
+                            width: 180,
+                            height: 180,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     );
                   },

@@ -67,13 +67,10 @@ class _SplashScreenState extends State<SplashScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 120,
-                        height: 120,
+                        width: 160,
+                        height: 160,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            colors: [AppColors.primaryLight, AppColors.accentCyan],
-                          ),
                           boxShadow: [
                             BoxShadow(
                               color: AppColors.accentCyan.withValues(alpha: 0.4),
@@ -82,7 +79,14 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                           ],
                         ),
-                        child: const Icon(Icons.shield, size: 60, color: Colors.white),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/mascot_character.png',
+                            width: 160,
+                            height: 160,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 24),
                       Text(
