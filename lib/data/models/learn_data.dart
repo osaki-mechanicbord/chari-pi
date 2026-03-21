@@ -15,6 +15,7 @@ class LearnContent {
   final String category;
   final String? penalty;
   final String? lawReference;
+  final String? source;
 
   const LearnContent({
     required this.title,
@@ -25,6 +26,7 @@ class LearnContent {
     required this.category,
     this.penalty,
     this.lawReference,
+    this.source,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,7 +39,7 @@ class LearnContent {
       'category': category,
       'penalty': penalty ?? '',
       'law_reference': lawReference ?? '',
-      'source_url': '',
+      'source': source ?? '',
       'version': 1,
       'updated_at': '2025-01-01T00:00:00Z',
     };

@@ -357,6 +357,7 @@ class _LearnScreenState extends State<LearnScreen> {
       'child_care': Icons.child_care,
       'electric_bike': Icons.electric_bike,
       'article': Icons.article,
+      'school': Icons.school,
     };
     return iconMap[iconName] ?? Icons.article;
   }

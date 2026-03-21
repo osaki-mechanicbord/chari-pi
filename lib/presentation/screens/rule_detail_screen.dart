@@ -17,6 +17,7 @@ class RuleDetailScreen extends StatelessWidget {
     final keyPoints = rule['key_points'] as List<dynamic>? ?? [];
     final lawRef = rule['law_reference'] as String? ?? '';
     final sourceUrl = rule['source_url'] as String? ?? '';
+    final sourceText = rule['source'] as String? ?? '';
     final penalty = rule['penalty'] as String? ?? '';
     final version = rule['version'] ?? 1;
     final updatedAt = rule['updated_at'] as String? ?? '';
@@ -213,6 +214,23 @@ class RuleDetailScreen extends StatelessWidget {
                               style: TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
+                            if (sourceText.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.menu_book, color: AppColors.accentGreen, size: 16),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        sourceText,
+                                        style: const TextStyle(color: AppColors.accentGreen, fontSize: 12, height: 1.5),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             if (sourceUrl.isNotEmpty)
                               GestureDetector(
                                 onTap: () => _launchUrl(sourceUrl),
@@ -336,6 +354,7 @@ class RuleDetailScreen extends StatelessWidget {
       'child_care': Icons.child_care,
       'electric_bike': Icons.electric_bike,
       'article': Icons.article,
+      'school': Icons.school,
     };
     return iconMap[iconName] ?? Icons.article;
   }
