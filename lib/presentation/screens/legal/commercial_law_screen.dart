@@ -53,7 +53,7 @@ class CommercialLawScreen extends StatelessWidget {
             children: [
               LegalTableRow(label: '無料プラン', value: '¥0\n基本ナビゲーション・学習機能\nGPS見守り（1名まで）'),
               LegalTableRow(label: 'ファミリー\nプラン', value: '月額 ¥480（税込）\n家族見守り（最大5名）\n安全スコア・ライドレポート'),
-              LegalTableRow(label: '法人プラン', value: '月額 ¥3,980（税込）\n従業員安全管理（最大50名）\nダッシュボード・一括管理'),
+              LegalTableRow(label: '法人プラン', value: '月額 ¥980（税込）\n従業員安全管理（最大50名）\nダッシュボード・一括管理'),
             ],
           ),
         ),

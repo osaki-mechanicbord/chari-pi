@@ -336,7 +336,7 @@ class _FamilySetupScreenState extends State<FamilySetupScreen> {
     if (title == '\u30d5\u30a1\u30df\u30ea\u30fc\u30d7\u30e9\u30f3') {
       priceLabel = '\u00a5480/\u6708';
     } else if (title == '\u6cd5\u4eba\u30d7\u30e9\u30f3') {
-      priceLabel = '\u00a53,980/\u6708';
+      priceLabel = '\u00a5980/\u6708';
     } else {
       priceLabel = '\u00a50';
     }
@@ -1011,7 +1011,7 @@ class _FamilySetupScreenState extends State<FamilySetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '\u7ba1\u7406\u8005\u3068\u3057\u3066\u767b\u9332\u3059\u308b\u306b\u306f\u6cd5\u4eba\u30d7\u30e9\u30f3\uff08\u00a53,980/\u6708\uff09\u3078\u306e\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9\u304c\u5fc5\u8981\u3067\u3059\u3002',
+                '\u7ba1\u7406\u8005\u3068\u3057\u3066\u767b\u9332\u3059\u308b\u306b\u306f\u6cd5\u4eba\u30d7\u30e9\u30f3\uff08\u00a5980/\u6708\uff09\u3078\u306e\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9\u304c\u5fc5\u8981\u3067\u3059\u3002',
                 style: TextStyle(color: AppColors.textSecondary, height: 1.5),
               ),
               const SizedBox(height: 16),

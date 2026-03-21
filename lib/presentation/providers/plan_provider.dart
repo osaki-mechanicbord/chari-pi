@@ -412,7 +412,7 @@ class PlanProvider extends ChangeNotifier {
       case PlanType.family:
         return '\u00a5480/\u6708';
       case PlanType.business:
-        return '\u00a53,980/\u6708';
+        return '\u00a5980/\u6708';
     }
   }
 }
