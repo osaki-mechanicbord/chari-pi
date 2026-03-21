@@ -31,5 +31,12 @@ class QuizDataZh {
     QuizQuestion(question: '2024年11月新设的"酒气带驾驶"处罚是？', options: ['反则金5,000日元', '1年以下有期徒刑或30万日元以下罚款', '3年以下有期徒刑或50万日元以下罚款', '5年以下有期徒刑或100万日元以下罚款'], correctIndex: 2, explanation: '新设的酒气带驾驶处罚为3年以下有期徒刑或50万日元以下罚款。', difficulty: 'hard', category: 'new_law'),
     QuizQuestion(question: '用手势信号示意右转的时机是？', options: ['右转前一刻', '右转前10m', '右转前30m', '右转前50m'], correctIndex: 2, explanation: '左右转信号需在30m前发出。变更车道需在3秒前发出。', difficulty: 'hard', category: 'safety'),
     QuizQuestion(question: '在自行车保险义务化地区未投保时？', options: ['有处罚', '目前无处罚但违反义务', '没问题', '没收自行车'], correctIndex: 1, explanation: '许多地方自治体义务化，但目前未投保没有处罚规定。但属于义务违反。', difficulty: 'hard', category: 'insurance'),
+    // ===== 规则手册追加问题 =====
+    QuizQuestion(question: '有自行车道的道路上，自行车应该在哪里骑行？', options: ['车道左侧边缘', '自行车道', '人行道', '哪里都可以'], correctIndex: 1, explanation: '有自行车道时，自行车有义务在该自行车道骑行（道路交通法第63条之3）。', difficulty: 'medium', category: 'road'),
+    QuizQuestion(question: '路面上画的"矢羽根标记（自行车导航标记）"有法律强制力吗？', options: ['有（骑行义务）', '没有（骑行规则的视觉辅助）', '是罚款对象', '与标志具有相同法律效力'], correctIndex: 1, explanation: '矢羽根标记本身没有法律强制力，但起到自行车应在车道左侧骑行的视觉辅助作用。', difficulty: 'medium', category: 'road'),
+    QuizQuestion(question: '防止大型车辆"内轮差"卷入事故最重要的是什么？', options: ['在大型车辆右侧骑行', '在路口不要站在大型车辆左侧', '比大型车辆先通过路口', '按铃提醒注意'], correctIndex: 1, explanation: '大型车辆内轮差大，左转时有卷入左侧自行车的危险。在路口不站在大型车辆左侧最为重要。', difficulty: 'hard', category: 'safety'),
+    QuizQuestion(question: '发生自行车事故时最先应该做什么？', options: ['打电话给保险公司', '在安全地方停车防止二次事故', '询问对方联系方式', '离开现场'], correctIndex: 1, explanation: '事故时首先在安全地方停车防止二次事故，然后救护伤者，再通报警察（110）。', difficulty: 'medium', category: 'safety'),
+    QuizQuestion(question: '被命令参加自行车驾驶员讲习的条件是？', options: ['1次违规就被命令', '3年内2次以上危险行为', '5年内3次以上违规', '每年1次必修'], correctIndex: 1, explanation: '3年内因2次以上危险行为被开罚单时，将被命令参加自行车驾驶员讲习（3小时·6,150日元）。', difficulty: 'hard', category: 'new_law'),
+    QuizQuestion(question: '大阪府自行车条例中被义务化的是什么？', options: ['佩戴头盔', '加入自行车保险', '取得自行车驾照', '每年1次安全讲习'], correctIndex: 1, explanation: '大阪府2016年4月施行的条例规定，加入自行车损害赔偿保险等是义务。', difficulty: 'hard', category: 'insurance'),
   ];
 }

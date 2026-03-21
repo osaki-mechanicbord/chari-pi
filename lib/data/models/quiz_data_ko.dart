@@ -31,5 +31,12 @@ class QuizDataKo {
     QuizQuestion(question: '2024년 11월 신설된 "주기대 운전" 벌칙은?', options: ['반칙금 5,000엔', '1년 이하 징역 또는 30만엔 이하 벌금', '3년 이하 징역 또는 50만엔 이하 벌금', '5년 이하 징역 또는 100만엔 이하 벌금'], correctIndex: 2, explanation: '신설된 주기대 운전 벌칙은 3년 이하 징역 또는 50만엔 이하 벌금입니다.', difficulty: 'hard', category: 'new_law'),
     QuizQuestion(question: '수신호로 우회전 합도를 내는 타이밍은?', options: ['우회전 직전', '우회전 10m 전', '우회전 30m 전', '우회전 50m 전'], correctIndex: 2, explanation: '좌우회전 합도는 30m 전부터 내야 합니다. 진로 변경은 3초 전.', difficulty: 'hard', category: 'safety'),
     QuizQuestion(question: '자전거 보험 의무화 지역에서 미가입 시?', options: ['벌칙 있음', '현재 벌칙 없으나 의무 위반', '아무 문제 없음', '자전거 몰수'], correctIndex: 1, explanation: '많은 자치단체에서 의무화되어 있으나 현재 미가입에 대한 벌칙은 없습니다. 그러나 의무 위반입니다.', difficulty: 'hard', category: 'insurance'),
+    // ===== 룰북 추가 퀴즈 =====
+    QuizQuestion(question: '자전거도가 있는 도로에서 자전거는 어디를 달려야 합니까?', options: ['차도 좌측 끝', '자전거도', '보도', '어디든 가능'], correctIndex: 1, explanation: '자전거도가 있는 경우, 자전거는 그 자전거도를 주행할 의무가 있습니다 (도로교통법 제63조의3).', difficulty: 'medium', category: 'road'),
+    QuizQuestion(question: '노면에 그려진 "자전거 내비 마크(화살표 마크)"는 법적 강제력이 있습니까?', options: ['있다 (주행 의무)', '없다 (주행 규칙의 시각적 보조)', '벌금 대상이 된다', '표지판과 동일한 법적 효력'], correctIndex: 1, explanation: '화살표 마크 자체에 법적 강제력은 없지만, 자전차가 차도 좌측을 달려야 한다는 것을 시각적으로 보여주는 역할을 합니다.', difficulty: 'medium', category: 'road'),
+    QuizQuestion(question: '대형 차량의 "내윤차"로 인한 끌려들기 사고를 방지하기 위해 가장 중요한 것은?', options: ['대형 차량 우측을 달린다', '교차로에서 대형 차량 좌측에 서지 않는다', '대형 차량보다 먼저 교차로를 통과한다', '벨을 울려 주의를 끈다'], correctIndex: 1, explanation: '대형 차량은 내윤차가 커서 좌회전 시 좌측 자전거를 끌어들일 위험이 있습니다. 교차로에서 대형 차량 좌측에 서지 않는 것이 가장 중요합니다.', difficulty: 'hard', category: 'safety'),
+    QuizQuestion(question: '자전거 사고를 당했을 때 가장 먼저 해야 할 일은?', options: ['보험회사에 전화', '안전한 장소에 정지하여 이차 사고 방지', '상대방 연락처 확인', '현장에서 떠나기'], correctIndex: 1, explanation: '사고 시에는 먼저 안전한 장소에 정지하여 이차 사고를 방지하고, 부상자 구호, 경찰 통보(110번) 순으로 대응합니다.', difficulty: 'medium', category: 'safety'),
+    QuizQuestion(question: '자전거 운전자 강습이 명령되는 조건은?', options: ['1회 위반으로 명령', '3년 이내 2회 이상 위험행위', '5년 이내 3회 이상 위반', '매년 1회 수강 의무'], correctIndex: 1, explanation: '3년 이내에 2회 이상의 위험행위로 교통위반 딱지를 받은 경우, 자전거 운전자 강습(3시간·6,150엔)의 수강이 명령됩니다.', difficulty: 'hard', category: 'new_law'),
+    QuizQuestion(question: '오사카부 자전거 조례에서 의무화된 것은?', options: ['헬멧 착용', '자전거 보험 가입', '자전거 면허 취득', '연 1회 안전 강습'], correctIndex: 1, explanation: '오사카부에서는 2016년 4월 시행 조례에 따라 자전거 손해배상보험 등에 가입이 의무화되어 있습니다.', difficulty: 'hard', category: 'insurance'),
   ];
 }

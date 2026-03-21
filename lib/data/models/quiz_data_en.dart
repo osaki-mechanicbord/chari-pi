@@ -247,14 +247,6 @@ class QuizDataEn {
       category: 'safety',
     ),
     QuizQuestion(
-      question: 'In the pre-ride safety check "BuTaHaShaBeru", what does "Bu" stand for?',
-      options: ['Parts (Buhin)', 'Brakes (Bureki)', 'Buzzer (Buza)', 'Disassembly inspection'],
-      correctIndex: 1,
-      explanation: '"BuTaHaShaBeru" stands for: Brakes (Bu), Tires (Ta), Reflectors/Lights (Ha), Frame (Sha), Bell (Beru) - 5 safety check items.',
-      difficulty: 'easy',
-      category: 'safety',
-    ),
-    QuizQuestion(
       question: 'When is a bicycle safety course ordered?',
       options: ['After 1 violation', '2+ dangerous acts within 3 years', '3+ violations within 5 years', 'Annual mandatory attendance'],
       correctIndex: 1,

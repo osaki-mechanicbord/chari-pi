@@ -284,15 +284,6 @@ class LearnDataEn {
       lawReference: 'Road Traffic Act Art. 72 (Accident Response Measures)',
       source: 'Based on: Osaka City "Bicycle Rulebook" (Sep 2025, Reiwa 7), independently restructured',
     ),
-    LearnContent(
-      title: 'Pre-Ride Safety Checklist',
-      icon: 'build',
-      summary: 'Use "BuTaHaShaBeru" for safety inspection',
-      content: 'Before every ride, perform a quick safety check. The Japanese mnemonic is "Bu-Ta-Ha-Sha-Beru" (ぶたはしゃべる).\n\n[Bu] Brakes\nCheck that both front and rear brakes work properly. Squeeze the levers and confirm the bicycle stops firmly.\n\n[Ta] Tires\nIs the air pressure adequate? Any worn treads or cracks? Riding on a flat tire damages the rim and makes handling unstable.\n\n[Ha] Hanshaban/Lights (Reflectors)\nCheck that the front light and tail light (or reflector) function properly. Watch for dead batteries.\n\n[Sha] Shatai (Frame/Body)\nCheck for loose handlebars or saddle, and whether the chain is slack. If you hear unusual sounds, have a shop inspect it.\n\n[Beru] Bell\nConfirm the bell rings properly. While ringing at pedestrians is a violation, having a functional bell is important for danger prevention.',
-      keyPoints: ['Remember "BuTaHaShaBeru" for safety checks', '5 items: Brakes, Tires, Reflectors/Lights, Frame, Bell', 'Make pre-ride checks a daily habit', 'Get professional inspection if anything seems wrong'],
-      category: 'safety',
-      source: 'Based on: Osaka City "Bicycle Rulebook" (Sep 2025, Reiwa 7), independently restructured',
-    ),
     // ===== new_law (additions) =====
     LearnContent(
       title: 'Bicycle Safety Course System',

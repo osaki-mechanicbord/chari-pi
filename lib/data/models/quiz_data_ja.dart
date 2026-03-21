@@ -247,14 +247,6 @@ class QuizDataJa {
       category: 'safety',
     ),
     QuizQuestion(
-      question: '出発前の安全点検「ぶたはしゃべる」の「ぶ」は何を意味しますか？',
-      options: ['部品', 'ブレーキ', 'ブザー', '分解点検'],
-      correctIndex: 1,
-      explanation: '「ぶたはしゃべる」は、ブレーキ（ぶ）・タイヤ（た）・反射板/ライト（は）・車体（しゃ）・ベル（べる）の安全点検の合言葉です。',
-      difficulty: 'easy',
-      category: 'safety',
-    ),
-    QuizQuestion(
       question: '自転車運転者講習が命じられる条件は？',
       options: ['1回の違反で命じられる', '3年以内に2回以上の危険行為', '5年以内に3回以上の違反', '毎年1回の受講が義務'],
       correctIndex: 1,
