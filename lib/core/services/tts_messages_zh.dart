@@ -41,8 +41,8 @@ String getTtsMessageZh(OSMNode node, int stage, int dist, {double? userSpeed}) {
       }
     case OSMNodeType.footway:
       switch (stage) {
-        case 2: return '正在接近人行道。请在车道左侧行驶';
-        case 3: return '您可能正在人行道上骑行。请回到车道';
+        case 2: return '这里是人行道。请确认是否有允许骑行的标志';
+        case 3: return '您可能正在人行道上骑行。请确认标志，如不可骑行请下车步行';
         default: return '';
       }
     case OSMNodeType.footwayNoBicycle:

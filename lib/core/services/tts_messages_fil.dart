@@ -41,8 +41,8 @@ String getTtsMessageFil(OSMNode node, int stage, int dist, {double? userSpeed}) 
       }
     case OSMNodeType.footway:
       switch (stage) {
-        case 2: return 'Papalapit sa sidewalk. Magmaneho sa kaliwang gilid ng kalsada';
-        case 3: return 'Maaaring nasa sidewalk ka. Bumalik sa kalsada';
+        case 2: return 'Sidewalk ito. Tingnan kung may karatula na pinapayagan ang bisikleta';
+        case 3: return 'Maaaring nasa sidewalk ka. Suriin ang karatula. Kung bawal, bumaba at maglakad';
         default: return '';
       }
     case OSMNodeType.footwayNoBicycle:

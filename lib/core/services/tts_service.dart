@@ -171,8 +171,8 @@ class TtsService {
         }
       case OSMNodeType.footway:
         switch (stage) {
-          case 2: return '歩道に近づいています。車道の左側を走行しましょう';
-          case 3: return '歩道を走行中の可能性があります。車道に戻ってください';
+          case 2: return '歩道です。自転車走行可の標識を確認してください';
+          case 3: return '歩道を走行中の可能性があります。標識を確認し、走行不可の場合は降りて歩いてください';
           default: return '';
         }
       case OSMNodeType.footwayNoBicycle:
@@ -272,8 +272,8 @@ class TtsService {
         }
       case OSMNodeType.footway:
         switch (stage) {
-          case 2: return 'Approaching sidewalk. Ride on the road';
-          case 3: return 'You may be on the sidewalk. Return to the road';
+          case 2: return 'Sidewalk ahead. Check for signs permitting cycling';
+          case 3: return 'You may be on a sidewalk. Check signs. If cycling is not allowed, please dismount';
           default: return '';
         }
       case OSMNodeType.footwayNoBicycle:

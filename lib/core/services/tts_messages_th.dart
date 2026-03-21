@@ -41,8 +41,8 @@ String getTtsMessageTh(OSMNode node, int stage, int dist, {double? userSpeed}) {
       }
     case OSMNodeType.footway:
       switch (stage) {
-        case 2: return 'กำลังเข้าใกล้ทางเท้า กรุณาขับชิดซ้ายบนถนน';
-        case 3: return 'อาจกำลังขี่บนทางเท้า กรุณากลับไปบนถนน';
+        case 2: return 'ที่นี่เป็นทางเท้า กรุณาตรวจสอบป้ายอนุญาตให้ขี่จักรยาน';
+        case 3: return 'อาจกำลังขี่บนทางเท้า กรุณาตรวจสอบป้าย หากห้ามกรุณาลงจากจักรยาน';
         default: return '';
       }
     case OSMNodeType.footwayNoBicycle:

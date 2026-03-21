@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:latlong2/latlong.dart';
@@ -45,6 +46,13 @@ class LocationProvider extends ChangeNotifier {
   // Warning deduplication: nodeId -> last alert stage
   final Map<int, int> _warnedNodeStages = {};
   static const double _warningResetDistance = 150.0;
+
+  // [P4] Time-based cooldown: nodeId -> last alert time
+  final Map<int, DateTime> _nodeAlertCooldown = {};
+  // [P4] Type-based cooldown: OSMNodeType -> last alert time
+  final Map<OSMNodeType, DateTime> _typeAlertCooldown = {};
+  static const Duration _nodeCooldownDuration = Duration(seconds: 30);
+  static const Duration _typeCooldownDuration = Duration(seconds: 15);
 
   // Route tracking
   List<LatLng> _routePoints = [];
@@ -239,9 +247,10 @@ class LocationProvider extends ChangeNotifier {
     await _fetchOsmDataIfNeeded(_latitude, _longitude);
   }
 
-  // --- Enhanced Warning System with 3-stage alerts + wrong-way detection ---
+  // --- Enhanced Warning System with directional filter + cooldown ---
   void _updateWarnings(double lat, double lon) {
     final userPos = LatLng(lat, lon);
+    final now = DateTime.now();
 
     // Update distances and perform wrong-way detection for all nearby nodes
     final updatedNodes = _nearbyNodes.map((node) {
@@ -281,26 +290,39 @@ class LocationProvider extends ChangeNotifier {
 
     _nearbyNodes = updatedNodes;
 
-    // Collect all active warnings (within extended alert distance)
-    final maxAlertDist = _alertDistance * 1.6; // wider detection radius
+    // Collect all active warnings (within alert distance)
+    final maxAlertDist = _alertDistance * 1.2;
     final activeWarnings = updatedNodes.where((n) {
       final dist = n.distanceFromUser ?? double.infinity;
       if (dist > maxAlertDist) return false;
-      // Must have an alert stage > 0
       final stage = _ttsService.getAlertStage(dist, n.type);
       return stage > 0;
     }).toList();
 
+    // [P2] Directional filter: only warn about nodes in forward ±60° cone
+    // Exception: danger-level warnings (wrong-way, no-bicycle on current road)
+    final directionalWarnings = activeWarnings.where((n) {
+      final level = n.warningLevel ?? WarningLevel.caution;
+      // Always show danger-level warnings regardless of direction
+      if (level == WarningLevel.danger) return true;
+      // If heading is unknown or speed is very low, show all
+      if (_heading <= 0 || _speed < 0.5) return true;
+      // Check if node is within forward ±60° cone
+      return _isInForwardCone(lat, lon, n.position.latitude, n.position.longitude, _heading, 60.0);
+    }).toList();
+
     // Sort by penalty risk (highest first), then distance
-    activeWarnings.sort((a, b) {
+    directionalWarnings.sort((a, b) {
       final riskCmp = b.penaltyRisk.compareTo(a.penaltyRisk);
       if (riskCmp != 0) return riskCmp;
       return (a.distanceFromUser ?? 0).compareTo(b.distanceFromUser ?? 0);
     });
 
-    // 3-stage alert triggers for tracking mode
+    // Alert triggers for tracking mode
     if (_rideStatus == RideStatus.tracking) {
-      for (final node in activeWarnings) {
+      bool spokeSomething = false; // [P5] Only one voice alert per update cycle
+
+      for (final node in directionalWarnings) {
         final dist = node.distanceFromUser ?? double.infinity;
         final stage = _ttsService.getAlertStage(dist, node.type);
         if (stage <= 0) continue;
@@ -310,7 +332,21 @@ class LocationProvider extends ChangeNotifier {
         // Trigger alert only when entering a new (higher) stage
         if (stage > prevStage) {
           _warnedNodeStages[node.id] = stage;
-          _triggerAlerts(node, stage);
+
+          // [P3] Voice only for stage 2+ (stage 1 = banner only)
+          // [P6] No voice for info-level nodes (cycleway, speedLimit without overspeed)
+          final warnLevel = node.warningLevel ?? WarningLevel.caution;
+          final shouldVoice = stage >= 2
+              && warnLevel != WarningLevel.info
+              && !spokeSomething
+              && _canAlertNode(node.id, node.type, now);
+
+          if (shouldVoice) {
+            _triggerAlerts(node, stage);
+            _nodeAlertCooldown[node.id] = now;
+            _typeAlertCooldown[node.type] = now;
+            spokeSomething = true;
+          }
 
           if (prevStage == 0) {
             _warningsCount++;
@@ -328,8 +364,39 @@ class LocationProvider extends ChangeNotifier {
       return (node.distanceFromUser ?? double.infinity) > _warningResetDistance;
     });
 
-    // Show top warnings in banner (max 3, sorted by risk)
-    _warningNodes = activeWarnings.take(3).toList();
+    // Clean up expired cooldowns
+    _nodeAlertCooldown.removeWhere((_, time) => now.difference(time) > _nodeCooldownDuration);
+    _typeAlertCooldown.removeWhere((_, time) => now.difference(time) > _typeCooldownDuration);
+
+    // [P5] Show only top 1 warning in banner (most dangerous)
+    _warningNodes = directionalWarnings.take(1).toList();
+  }
+
+  /// [P2] Check if a target point is within the forward cone of the user's heading
+  bool _isInForwardCone(double userLat, double userLon, double targetLat, double targetLon, double heading, double halfAngle) {
+    final dLon = targetLon - userLon;
+    final dLat = targetLat - userLat;
+    // Bearing from user to target (degrees, 0=north, clockwise)
+    final bearing = (math.atan2(dLon * math.cos(userLat * math.pi / 180), dLat) * 180 / math.pi + 360) % 360;
+    // Angular difference
+    final diff = ((bearing - heading) + 360) % 360;
+    // Within ±halfAngle means diff < halfAngle OR diff > (360 - halfAngle)
+    return diff <= halfAngle || diff >= (360 - halfAngle);
+  }
+
+  /// [P4] Check if a node/type is allowed to alert (cooldown check)
+  bool _canAlertNode(int nodeId, OSMNodeType type, DateTime now) {
+    // Check node-level cooldown (30s)
+    final lastNodeAlert = _nodeAlertCooldown[nodeId];
+    if (lastNodeAlert != null && now.difference(lastNodeAlert) < _nodeCooldownDuration) {
+      return false;
+    }
+    // Check type-level cooldown (15s)
+    final lastTypeAlert = _typeAlertCooldown[type];
+    if (lastTypeAlert != null && now.difference(lastTypeAlert) < _typeCooldownDuration) {
+      return false;
+    }
+    return true;
   }
 
   /// Classify warning level based on type and distance
@@ -410,6 +477,8 @@ class LocationProvider extends ChangeNotifier {
     _trafficSignalCount = 0;
     _routePoints = [];
     _warnedNodeStages.clear();
+    _nodeAlertCooldown.clear();
+    _typeAlertCooldown.clear();
     _prevLat = null;
     _prevLon = null;
     _isDemoMode = demoMode;
@@ -450,6 +519,8 @@ class LocationProvider extends ChangeNotifier {
     _isDemoMode = false;
     _warningNodes = [];
     _warnedNodeStages.clear();
+    _nodeAlertCooldown.clear();
+    _typeAlertCooldown.clear();
 
     try {
       WakelockPlus.disable();

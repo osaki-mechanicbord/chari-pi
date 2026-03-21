@@ -41,8 +41,8 @@ String getTtsMessageVi(OSMNode node, int stage, int dist, {double? userSpeed}) {
       }
     case OSMNodeType.footway:
       switch (stage) {
-        case 2: return 'Đang tiến gần vỉa hè. Hãy đi bên trái đường';
-        case 3: return 'Bạn có thể đang đi trên vỉa hè. Hãy quay lại đường';
+        case 2: return 'Đây là vỉa hè. Hãy kiểm tra biển báo cho phép xe đạp';
+        case 3: return 'Bạn có thể đang đi trên vỉa hè. Hãy kiểm tra biển báo, nếu không được phép hãy xuống xe';
         default: return '';
       }
     case OSMNodeType.footwayNoBicycle:

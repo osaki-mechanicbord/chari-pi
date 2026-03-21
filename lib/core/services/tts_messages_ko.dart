@@ -41,8 +41,8 @@ String getTtsMessageKo(OSMNode node, int stage, int dist, {double? userSpeed}) {
       }
     case OSMNodeType.footway:
       switch (stage) {
-        case 2: return '보도에 접근 중입니다. 차도 좌측을 주행하세요';
-        case 3: return '보도를 주행 중일 수 있습니다. 차도로 돌아가세요';
+        case 2: return '보도입니다. 자전거 주행 가능 표지판을 확인하세요';
+        case 3: return '보도를 주행 중일 수 있습니다. 표지판을 확인하고, 주행 불가 시 내려서 걸으세요';
         default: return '';
       }
     case OSMNodeType.footwayNoBicycle:
