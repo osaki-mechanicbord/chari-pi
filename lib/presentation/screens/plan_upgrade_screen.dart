@@ -125,7 +125,8 @@ class PlanUpgradeScreen extends StatelessWidget {
                             color: AppColors.accentCyan,
                             icon: Icons.family_restroom,
                             isRecommended: true,
-                            badgeText: '\u500b\u4eba\u304a\u3059\u3059\u3081',
+                            badgeText: 'Coming Soon',
+                            isComingSoon: true,
                             features: [
                               _FeatureItem('\u7121\u6599\u30d7\u30e9\u30f3\u306e\u5168\u6a5f\u80fd', true),
                               _FeatureItem('\u89aa\u5b50\u30ea\u30f3\u30af\u6a5f\u80fd\uff08\u6700\u59275\u4eba\uff09', true),
@@ -138,27 +139,7 @@ class PlanUpgradeScreen extends StatelessWidget {
                               _FeatureItem('\u5e74\u9f62\u5225\u8a2d\u5b9a\uff08\u5c0f\u5b66\u751f/\u4e2d\u9ad8\u751f\uff09', true),
                               _FeatureItem('\u512a\u5148\u30b5\u30dd\u30fc\u30c8', true),
                             ],
-                            onSelect: planProvider.currentPlan == PlanType.family
-                                ? null
-                                : () async {
-                                    final confirmed = await _showUpgradeConfirm(
-                                      context,
-                                      '\u30d5\u30a1\u30df\u30ea\u30fc\u30d7\u30e9\u30f3',
-                                      '\u00a5480/\u6708',
-                                      AppColors.accentCyan,
-                                      Icons.family_restroom,
-                                      ['\u89aa\u5b50\u30ea\u30f3\u30af\uff08\u6700\u59275\u4eba\uff09', '\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0GPS\u8ffd\u8de1', '\u5371\u967a\u904b\u8ee2\u30ec\u30dd\u30fc\u30c8', '\u5b89\u5168\u30b9\u30b3\u30a2\u7ba1\u7406'],
-                                    );
-                                    if (confirmed == true) {
-                                      await planProvider.upgradeToPlan(PlanType.family);
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('\u30d5\u30a1\u30df\u30ea\u30fc\u30d7\u30e9\u30f3\u306b\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9\u3057\u307e\u3057\u305f\uff01'), backgroundColor: AppColors.safe),
-                                        );
-                                        Navigator.pop(context);
-                                      }
-                                    }
-                                  },
+                            onSelect: () => _showComingSoonDialog(context),
                           ),
                           const SizedBox(height: 16),
 
@@ -172,8 +153,9 @@ class PlanUpgradeScreen extends StatelessWidget {
                             color: _businessGold,
                             icon: Icons.business,
                             isRecommended: false,
-                            badgeText: '\u6cd5\u4eba\u5411\u3051',
+                            badgeText: 'Coming Soon',
                             badgeColor: _businessGold,
+                            isComingSoon: true,
                             features: [
                               _FeatureItem('\u30d5\u30a1\u30df\u30ea\u30fc\u30d7\u30e9\u30f3\u306e\u5168\u6a5f\u80fd', true),
                               _FeatureItem('\u767b\u9332\u4eba\u6570\u7121\u5236\u9650', true),
@@ -186,27 +168,7 @@ class PlanUpgradeScreen extends StatelessWidget {
                               _FeatureItem('\u5c02\u7528\u30b5\u30dd\u30fc\u30c8\u7a93\u53e3', true),
                               _FeatureItem('\u30ab\u30b9\u30bf\u30e0\u30d6\u30e9\u30f3\u30c7\u30a3\u30f3\u30b0', true),
                             ],
-                            onSelect: planProvider.currentPlan == PlanType.business
-                                ? null
-                                : () async {
-                                    final confirmed = await _showUpgradeConfirm(
-                                      context,
-                                      '\u6cd5\u4eba\u30d7\u30e9\u30f3',
-                                      '\u00a5980/\u6708',
-                                      _businessGold,
-                                      Icons.business,
-                                      ['\u767b\u9332\u4eba\u6570\u7121\u5236\u9650', '\u5f93\u696d\u54e1\u30fb\u90e8\u7f72\u7ba1\u7406', '\u90e8\u7f72\u5225\u5b89\u5168\u7d71\u8a08', '\u6708\u6b21PDF\u30ec\u30dd\u30fc\u30c8', '\u5c02\u7528\u30b5\u30dd\u30fc\u30c8'],
-                                    );
-                                    if (confirmed == true) {
-                                      await planProvider.upgradeToPlan(PlanType.business);
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('\u6cd5\u4eba\u30d7\u30e9\u30f3\u306b\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9\u3057\u307e\u3057\u305f\uff01'), backgroundColor: AppColors.safe),
-                                        );
-                                        Navigator.pop(context);
-                                      }
-                                    }
-                                  },
+                            onSelect: () => _showComingSoonDialog(context),
                           ),
                           const SizedBox(height: 24),
 
@@ -226,6 +188,37 @@ class PlanUpgradeScreen extends StatelessWidget {
     );
   }
 
+  void _showComingSoonDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.schedule, color: AppColors.accentCyan),
+            SizedBox(width: 10),
+            Expanded(child: Text('\u6e96\u5099\u4e2d', style: TextStyle(color: AppColors.textPrimary, fontSize: 18))),
+          ],
+        ),
+        content: const Text(
+          '\u3053\u306e\u30d7\u30e9\u30f3\u306f\u73fe\u5728\u958b\u767a\u4e2d\u3067\u3059\u3002\u30ea\u30ea\u30fc\u30b9\u6642\u671f\u304c\u6c7a\u307e\u308a\u6b21\u7b2c\u3001\u30a2\u30d7\u30ea\u5185\u3067\u304a\u77e5\u3089\u305b\u3044\u305f\u3057\u307e\u3059\u3002\n\n\u7121\u6599\u30d7\u30e9\u30f3\u3067\u3082\u30ca\u30d3\u30b2\u30fc\u30b7\u30e7\u30f3\u30fb\u5b66\u7fd2\u30fb\u30af\u30a4\u30ba\u306e\u5168\u6a5f\u80fd\u3092\u3054\u5229\u7528\u3044\u305f\u3060\u3051\u307e\u3059\u3002',
+          style: TextStyle(color: AppColors.textSecondary, height: 1.6),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accentCyan,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('OK', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPlanCard({
     required BuildContext context,
     required String title,
@@ -236,6 +229,7 @@ class PlanUpgradeScreen extends StatelessWidget {
     required IconData icon,
     required List<_FeatureItem> features,
     bool isRecommended = false,
+    bool isComingSoon = false,
     String? badgeText,
     Color? badgeColor,
     VoidCallback? onSelect,
@@ -324,23 +318,53 @@ class PlanUpgradeScreen extends StatelessWidget {
                       ],
                     ),
                   )),
+              if (isComingSoon)
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.schedule, color: AppColors.warning, size: 16),
+                      SizedBox(width: 6),
+                      Text(
+                        '\u73fe\u5728\u6e96\u5099\u4e2d\u30fb\u4eca\u5f8c\u63d0\u4f9b\u4e88\u5b9a',
+                        style: TextStyle(color: AppColors.warning, fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: onSelect,
+                  onPressed: isComingSoon ? onSelect : onSelect,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isCurrentPlan ? AppColors.bgCard : color,
+                    backgroundColor: isCurrentPlan
+                        ? AppColors.bgCard
+                        : isComingSoon
+                            ? AppColors.textMuted.withValues(alpha: 0.3)
+                            : color,
                     foregroundColor: isCurrentPlan ? color : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: isCurrentPlan ? BorderSide(color: color) : BorderSide.none,
                     ),
-                    elevation: isCurrentPlan ? 0 : 4,
+                    elevation: isCurrentPlan ? 0 : isComingSoon ? 0 : 4,
                   ),
                   child: Text(
-                    isCurrentPlan ? '\u73fe\u5728\u5229\u7528\u4e2d' : '\u3053\u306e\u30d7\u30e9\u30f3\u3092\u9078\u629e',
+                    isCurrentPlan
+                        ? '\u73fe\u5728\u5229\u7528\u4e2d'
+                        : isComingSoon
+                            ? '\u8a73\u7d30\u3092\u78ba\u8a8d'
+                            : '\u3053\u306e\u30d7\u30e9\u30f3\u3092\u9078\u629e',
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -416,64 +440,6 @@ class PlanUpgradeScreen extends StatelessWidget {
               Expanded(child: Text(answer, style: TextStyle(color: AppColors.textSecondary, fontSize: 12, height: 1.5))),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Future<bool?> _showUpgradeConfirm(BuildContext context, String planName, String price, Color color, IconData icon, List<String> features) {
-    return showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.bgCard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(width: 10),
-            Text('\u30d7\u30e9\u30f3\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9', style: TextStyle(color: AppColors.textPrimary, fontSize: 18)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('$planName\uff08$price\uff09\u306b\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9\u3057\u307e\u3059\u304b\uff1f', style: TextStyle(color: AppColors.textSecondary, height: 1.5)),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                children: features.map((f) => _confirmFeatureRow(Icons.check, f)).toList(),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text('\u203b \u73fe\u5728\u306f\u30c7\u30e2\u30e2\u30fc\u30c9\u3067\u3059\u3002\u5b9f\u969b\u306e\u8ab2\u91d1\u306f\u767a\u751f\u3057\u307e\u305b\u3093\u3002', style: TextStyle(color: AppColors.warning, fontSize: 11)),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('\u30ad\u30e3\u30f3\u30bb\u30eb', style: TextStyle(color: AppColors.textMuted)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-            child: const Text('\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Widget _confirmFeatureRow(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.safe, size: 16),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text, style: const TextStyle(color: AppColors.textPrimary, fontSize: 12))),
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:latlong2/latlong.dart' as ll;
 import 'package:provider/provider.dart';
 import 'package:cycle_guard/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/colors.dart';
 import '../../core/utils/distance_calculator.dart' as utils;
 import '../../data/models/osm_node.dart';
@@ -29,13 +30,14 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
   bool _gpsInitialized = false;
   StreamSubscription? _gpsSubscription;
   Timer? _durationTimer;
+  String? _gpsError;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeGps();
+      _showPermissionExplanationIfNeeded();
     });
   }
 
@@ -44,6 +46,16 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
     if (state == AppLifecycleState.resumed && _gpsInitialized) {
       _initializeGps();
     }
+  }
+
+  Future<void> _showPermissionExplanationIfNeeded() async {
+    // On web, just initialize directly (browser handles permission dialog)
+    if (kIsWeb) {
+      _initializeGps();
+      return;
+    }
+    // On mobile, show explanation first then initialize (geolocator handles actual request)
+    _initializeGps();
   }
 
   Future<void> _initializeGps() async {
@@ -59,10 +71,22 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
 
     _gpsSubscription = platform.startGpsStream(
       onPosition: (lat, lon, accuracy, speed, heading) {
+        if (_gpsError != null) {
+          setState(() => _gpsError = null);
+        }
         provider.onPositionUpdate(lat, lon, accuracy, speed, heading);
       },
       onError: (error) {
         if (kDebugMode) debugPrint('GPS Error: $error');
+        setState(() {
+          if (error.contains('DENIED_FOREVER')) {
+            _gpsError = 'denied_forever';
+          } else if (error.contains('DENIED')) {
+            _gpsError = 'denied';
+          } else if (error.contains('DISABLED')) {
+            _gpsError = 'disabled';
+          }
+        });
       },
     );
 
@@ -206,6 +230,13 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
                 child: WarningBanner(warnings: locationProvider.warningNodes),
               ),
 
+            // GPS Permission Error Banner
+            if (_gpsError != null)
+              Positioned(
+                top: 0, left: 0, right: 0,
+                child: _buildGpsErrorBanner(l),
+              ),
+
             Positioned(
               top: 12, right: 12,
               child: GpsAccuracyIndicator(
@@ -347,6 +378,97 @@ class _NavigationScreenState extends State<NavigationScreen> with WidgetsBinding
       case OSMNodeType.enforcementZone:
         return _MarkerConfig(Icons.local_police, const Color(0xFF1A237E), BitmapDescriptor.hueBlue);
     }
+  }
+
+  Widget _buildGpsErrorBanner(L10n l) {
+    String message;
+    String actionText;
+    VoidCallback? action;
+
+    switch (_gpsError) {
+      case 'denied_forever':
+        message = '\u4f4d\u7f6e\u60c5\u5831\u304c\u6c38\u4e45\u7684\u306b\u62d2\u5426\u3055\u308c\u3066\u3044\u307e\u3059\u3002\u8a2d\u5b9a\u30a2\u30d7\u30ea\u304b\u3089\u4f4d\u7f6e\u60c5\u5831\u3092\u8a31\u53ef\u3057\u3066\u304f\u3060\u3055\u3044\u3002';
+        actionText = '\u8a2d\u5b9a\u3092\u958b\u304f';
+        action = () {
+          // Open app settings on Android
+          if (!kIsWeb) {
+            launchUrl(Uri.parse('app-settings:'));
+          }
+        };
+      case 'denied':
+        message = '\u30ca\u30d3\u30b2\u30fc\u30b7\u30e7\u30f3\u306b\u306f\u4f4d\u7f6e\u60c5\u5831\u306e\u8a31\u53ef\u304c\u5fc5\u8981\u3067\u3059\u3002\u5b89\u5168\u8b66\u544a\u3092\u53d7\u3051\u53d6\u308b\u305f\u3081\u3001\u4f4d\u7f6e\u60c5\u5831\u3092\u8a31\u53ef\u3057\u3066\u304f\u3060\u3055\u3044\u3002';
+        actionText = '\u518d\u8a66\u884c';
+        action = () {
+          setState(() {
+            _gpsInitialized = false;
+            _gpsError = null;
+          });
+          _initializeGps();
+        };
+      case 'disabled':
+        message = 'GPS\u304c\u7121\u52b9\u3067\u3059\u3002\u7aef\u672b\u306e\u4f4d\u7f6e\u60c5\u5831\u30b5\u30fc\u30d3\u30b9\u3092ON\u306b\u3057\u3066\u304f\u3060\u3055\u3044\u3002';
+        actionText = '\u518d\u8a66\u884c';
+        action = () {
+          setState(() {
+            _gpsInitialized = false;
+            _gpsError = null;
+          });
+          _initializeGps();
+        };
+      default:
+        message = 'GPS\u306e\u53d6\u5f97\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002';
+        actionText = '\u518d\u8a66\u884c';
+        action = () {
+          setState(() {
+            _gpsInitialized = false;
+            _gpsError = null;
+          });
+          _initializeGps();
+        };
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 10)],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.location_off, color: Colors.white, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '\u4f4d\u7f6e\u60c5\u5831\u304c\u5fc5\u8981\u3067\u3059',
+                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  message,
+                  style: const TextStyle(color: Colors.white, fontSize: 12, height: 1.4),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: action,
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text(actionText, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildInfoCard(LocationProvider provider, L10n l) {

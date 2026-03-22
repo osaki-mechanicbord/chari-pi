@@ -158,7 +158,7 @@ class SettingsScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(l.appVersion, style: const TextStyle(color: AppColors.textPrimary, fontSize: 15)),
                         const Spacer(),
-                        Text('1.0.0', style: TextStyle(color: AppColors.textMuted)),
+                        Text('1.2.1', style: TextStyle(color: AppColors.textMuted)),
                       ],
                     ),
                   ),

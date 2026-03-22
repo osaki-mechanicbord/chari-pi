@@ -18,7 +18,7 @@ class ContentApiService {
   static Future<Map<String, dynamic>> _get(String path, {Map<String, String>? params}) async {
     try {
       final uri = Uri.parse('$baseUrl$path').replace(queryParameters: params);
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final response = await http.get(uri).timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }

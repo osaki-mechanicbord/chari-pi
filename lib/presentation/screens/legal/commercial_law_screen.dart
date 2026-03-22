@@ -10,7 +10,7 @@ class CommercialLawScreen extends StatelessWidget {
     return LegalPageScreen(
       title: '特定商取引法に基づく表記',
       children: [
-        const LegalLastUpdated('2025年7月1日'),
+        const LegalLastUpdated('2025年7月15日'),
         const LegalParagraph(
           '特定商取引に関する法律（特定商取引法）第11条に基づき、以下の事項を表示いたします。',
         ),
@@ -27,7 +27,7 @@ class CommercialLawScreen extends StatelessWidget {
           child: const Column(
             children: [
               LegalTableRow(label: '販売事業者', value: '株式会社TCI'),
-              LegalTableRow(label: '代表者', value: '代表取締役'),
+              LegalTableRow(label: '代表者', value: '代表取締役 大崎 雄斗'),
               LegalTableRow(label: '所在地', value: '〒532-0033\n大阪府大阪市淀川区新高1-5-4'),
               LegalTableRow(label: 'メール', value: 'info@tci-corp.co.jp'),
               LegalTableRow(
